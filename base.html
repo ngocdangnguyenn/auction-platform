@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enchères au Centime</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #ff5733;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #ff7043;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .enchere, .achat-jetons {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff5733;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #e64a19;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Enchères au Centime - Gagnez les meilleurs produits à petit prix
+    </header>
+    <nav>
+        <a href="#">Accueil</a>
+        <a href="#">Enchères</a>
+        <a href="#">Acheter des jetons</a>
+        <a href="#">Mon compte</a>
+        <a href="#">Connexion</a>
+    </nav>
+    
+    <section id="enchères">
+        <h2>Enchères en cours</h2>
+        <div class="enchere">
+            <h3>📱 Smartphone dernier cri</h3>
+            <p>Prix actuel : <strong id="prix1">1,23€</strong></p>
+            <button onclick="miser(1)">Miser</button>
+        </div>
+        <div class="enchere">
+            <h3>💻 Ordinateur portable gaming</h3>
+            <p>Prix actuel : <strong id="prix2">2,45€</strong></p>
+            <button onclick="miser(2)">Miser</button>
+        </div>
+    </section>
+    
+    <section id="achat-jetons">
+        <h2>Acheter des Jetons</h2>
+        <div class="achat-jetons">
+            <p>10 Jetons - 5€</p>
+            <button onclick="acheterJetons(10)">Acheter</button>
+        </div>
+        <div class="achat-jetons">
+            <p>50 Jetons - 20€</p>
+            <button onclick="acheterJetons(50)">Acheter</button>
+        </div>
+        <div class="achat-jetons">
+            <p>100 Jetons - 35€</p>
+            <button onclick="acheterJetons(100)">Acheter</button>
+        </div>
+    </section>
+    
+    <footer>
+        &copy; 2025 Enchères au Centime. Tous droits réservés.
+    </footer>
+
+    <script>
+        let jetons = 5; 
+        
+        function miser(id) {
+            if (jetons > 0) {
+                let prixElement = document.getElementById(`prix${id}`);
+                let prixActuel = parseFloat(prixElement.innerText.replace('€', '').replace(',', '.'));
+                let nouveauPrix = (prixActuel + 0.01).toFixed(2).replace('.', ',');
+                prixElement.innerText = nouveauPrix + '€';
+                jetons--;
+                alert(`Mise acceptée ! Il vous reste ${jetons} jetons.`);
+            } else {
+                alert("Vous n'avez plus de jetons ! Achetez-en pour continuer.");
+            }
+        }
+        
+        function acheterJetons(nombre) {
+            jetons += nombre;
+            alert(`Vous avez acheté ${nombre} jetons. Total actuel : ${jetons} jetons.`);
+        }
+    </script>
+</body>
+</html>
