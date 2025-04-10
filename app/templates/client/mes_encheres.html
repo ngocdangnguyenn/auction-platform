@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Enchères{% endblock %}
+
+{% block content %}
+<header class="bg-primary text-white py-3">
+    <div class="container">
+        <h1 class="h3">Mes Enchères</h1>
+    </div>
+</header>
+
+<div class="container my-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h2 class="mb-4">Enchères où j'ai placé des jetons</h2>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Produit</th>
+            <th>Prix actuel</th>
+            <th>Prix proposé</th>
+            <th>Date de fin</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for enchere, mise in encheres %}
+        <tr>
+            <td>{{ enchere.produit.nom_produit }}</td>
+            <td>{{ enchere.produit.prix_produit }} €</td>
+            <td>{{ mise.prix_propose }} €</td>
+            <td>{{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                {% if enchere.date_fin < now %}
+                    {% if enchere.gagnant_id == current_user.id_utilisateur %}
+                        <span class="badge bg-success">Gagnée</span>
+                    {% else %}
+                        <span class="badge bg-danger">Perdue</span>
+                    {% endif %}
+                {% else %}
+                    <span class="badge bg-warning text-dark">En cours</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center">Vous n'avez participé à aucune enchère.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Attribuer des jetons à {{ utilisateur.nom_utilisateur }}</h1>
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="mb-3">
+            <label for="nombre_jetons" class="form-label">Nombre de jetons :</label>
+            {{ form.nombre_jetons(class="form-control") }}
+        </div>
+        <div class="d-flex gap-2">
+            {{ form.submit(class="btn btn-success") }}
+            <a href="{{ url_for('admin.utilisateurs') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

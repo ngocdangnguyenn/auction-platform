@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Titre principal -->
+    <h1 class="text-center text-uppercase fw-bold text-primary mb-4">
+        <i class="fas fa-paper-plane me-2"></i> Envoyer une Notification
+    </h1>
+    <hr class="mb-4">
+
+    <!-- Formulaire -->
+    <form method="POST" class="p-4 border rounded shadow-sm bg-light">
+        {{ form.csrf_token }}
+        <!-- Sélection des destinataires -->
+        <div class="mb-4">
+            <label for="utilisateurs" class="form-label fw-bold">Sélectionnez les destinataires :</label>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="select_all" onclick="toggleUsers()">
+                <label class="form-check-label fw-bold text-secondary" for="select_all">Tous les utilisateurs</label>
+            </div>
+            <div class="form-check">
+                {% for value, label in form.utilisateurs.choices %}
+                <div class="form-check mb-1">
+                    <input class="form-check-input user-checkbox" type="checkbox" name="utilisateurs" value="{{ value }}" id="utilisateur_{{ value }}">
+                    <label class="form-check-label text-dark" for="utilisateur_{{ value }}">
+                        <i class="fas fa-user me-2 text-primary"></i> {{ label }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Message -->
+        <div class="mb-4">
+            <label for="message" class="form-label fw-bold">Message :</label>
+            {{ form.message(class="form-control shadow-sm", placeholder="Tapez votre message ici...") }}
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success px-4 py-2">
+                <i class="fas fa-paper-plane me-2"></i> Envoyer
+            </button>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary px-4 py-2">
+                <i class="fas fa-arrow-left me-2"></i> Annuler
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Script JavaScript pour cocher/décocher tous les utilisateurs -->
+<script>
+    function toggleUsers() {
+        const selectAll = document.getElementById('select_all');
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked; // Coche ou décoche selon "Tous les utilisateurs"
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier un Pack{% endblock %}
+
+{% block content %}
+<header class="bg-primary text-white py-3">
+    <div class="container">
+        <h1 class="h3">Modifier le Pack : {{ pack.nom_pack }}</h1>
+    </div>
+</header>
+<div class="container my-5">
+    <form method="POST" action="{{ url_for('admin.modifier_pack', pack_id=pack.id_pack) }}" class="p-4 border rounded bg-light">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.nom_pack.label }}
+            {{ form.nom_pack(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.nombre_jetons.label }}
+            {{ form.nombre_jetons(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.prix_pack.label }}
+            {{ form.prix_pack(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier</button>
+        <a href="{{ url_for('admin.gestion_packs') }}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

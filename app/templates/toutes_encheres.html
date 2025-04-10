@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Toutes les Enchères{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center text-primary fw-bold mb-4">Toutes les Enchères</h1>
+    
+    <!-- Bloc de filtres -->
+    <div class="mb-4 text-center">
+        <div class="btn-group" role="group" aria-label="Filtrer les enchères">
+            <a href="{{ url_for('main.toutes_encheres', filter='all') }}" class="btn btn-outline-primary {% if filter_choice == 'all' %}active{% endif %}">
+                Toutes
+            </a>
+            <a href="{{ url_for('main.toutes_encheres', filter='actuelles') }}" class="btn btn-outline-primary {% if filter_choice == 'actuelles' %}active{% endif %}">
+                En cours
+            </a>
+            <a href="{{ url_for('main.toutes_encheres', filter='terminees') }}" class="btn btn-outline-primary {% if filter_choice == 'terminees' %}active{% endif %}">
+                Terminées
+            </a>
+        </div>
+    </div>
+
+    {% if encheres %}
+    <div class="row g-4">
+        {% for enchere in encheres %}
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                {% if enchere.produit.photo_url %}
+                <img src="{{ enchere.produit.photo_url }}" alt="{{ enchere.produit.nom_produit }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default-product.png') }}" alt="Image par défaut" class="card-img-top" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ enchere.produit.nom_produit }}</h5>
+                    <p class="text-muted">{{ enchere.produit.description[:100] }}{% if enchere.produit.description|length > 100 %}...{% endif %}</p>
+                    <p class="text-secondary">Fin : {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
+                    <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-primary">Voir l'enchère</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-danger text-center">
+        <i class="fas fa-exclamation-circle me-2"></i> Aucune enchère disponible.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

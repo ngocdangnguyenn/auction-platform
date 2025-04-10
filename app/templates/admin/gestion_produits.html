@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Produits{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Table des Produits -->
+    <section>
+        <h3 class="text-secondary fw-bold mb-3">Liste des Produits</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Prix (€)</th>
+                        <th>Catégorie</th>
+                        <th>Photo</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in produits %}
+                    <tr>
+                        <td class="text-center">{{ produit.id_produit }}</td>
+                        <td>{{ produit.nom_produit }}</td>
+                        <td class="text-muted">{{ produit.description }}</td>
+                        <td class="text-center">{{ produit.prix_produit }}</td>
+                        <td class="text-center">{{ produit.categorie }}</td>
+                        <td class="text-center">
+                            {% if produit.photo_url %}
+                                <img src="{{ produit.photo_url }}" alt="Photo du produit" class="rounded shadow-sm" style="width: 80px; height: auto;">
+                            {% else %}
+                                <span class="text-danger">Aucune photo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}" class="btn btn-sm btn-outline-warning me-2">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger" onclick="event.preventDefault(); if(confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) { document.getElementById('delete-form-{{ produit.id_produit }}').submit(); }">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                            <form id="delete-form-{{ produit.id_produit }}" action="{{ url_for('admin.supprimer_produit', produit_id=produit.id_produit) }}" method="POST" style="display: none;">
+                                {{ csrf_token() }}
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">Aucun produit disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Formulaire d'ajout de produit -->
+    <section class="mt-5">
+        <h3 class="text-secondary fw-bold mb-3">Ajouter un Nouveau Produit</h3>
+        <form method="POST" action="{{ url_for('admin.gestion_produits') }}" class="p-4 border rounded shadow-sm bg-light">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom du Produit</label>
+                {{ form.nom_produit(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                {{ form.description(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="prix" class="form-label">Prix (€)</label>
+                {{ form.prix_produit(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="categorie" class="form-label">Catégorie</label>
+                {{ form.categorie(class="form-select shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="photo_url" class="form-label">URL de la photo</label>
+                {{ form.photo_url(class="form-control shadow-sm") }}
+            </div>
+            <button type="submit" class="btn btn-success w-100 py-2">
+                <i class="fas fa-plus-circle me-2"></i> Ajouter le Produit
+            </button>
+        </form>
+    </section>
+</div>
+{% endblock %}

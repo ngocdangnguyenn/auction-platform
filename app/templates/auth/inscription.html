@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333333;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #555555;
+        }
+        .form-control {
+            font-size: 1.1rem;
+            padding: 12px 15px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .btn {
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 1.2rem;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-container {
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: 4rem; /* Ajout d'un espace à droite */
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Inscription</h1>
+
+        <!-- Messages Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container mb-4">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <i class="fas fa-info-circle"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.inscription') }}">
+            {{ form.hidden_tag() }}
+            
+            <!-- Champs du formulaire -->
+            <label for="nom" class="form-label">Nom</label>
+            {{ form.nom(class="form-control", placeholder="Entrez votre nom") }}
+
+            <label for="prenom" class="form-label">Prénom</label>
+            {{ form.prenom(class="form-control", placeholder="Entrez votre prénom") }}
+
+            <label for="email" class="form-label">Email</label>
+            {{ form.email(class="form-control", placeholder="Entrez votre email") }}
+
+            <label for="mot_de_passe" class="form-label">Mot de passe</label>
+            {{ form.mot_de_passe(class="form-control", placeholder="Créez un mot de passe") }}
+
+            <label for="confirmation_mot_de_passe" class="form-label">Confirmez le mot de passe</label>
+            {{ form.confirmation_mot_de_passe(class="form-control", placeholder="Confirmez votre mot de passe") }}
+
+            <label for="adresse" class="form-label">Adresse</label>
+            {{ form.adresse(class="form-control", placeholder="Entrez votre adresse") }}
+
+            <label for="code_postal" class="form-label">Code postal</label>
+            {{ form.code_postal(class="form-control", placeholder="Entrez votre code postal") }}
+
+            <label for="ville" class="form-label">Ville</label>
+            {{ form.ville(class="form-control", placeholder="Entrez votre ville") }}
+
+            <label for="pays" class="form-label">Pays</label>
+            {{ form.pays(class="form-control", placeholder="Entrez votre pays") }}
+
+            <label for="telephone" class="form-label">Téléphone</label>
+            {{ form.telephone(class="form-control", placeholder="Entrez votre téléphone") }}
+
+            <!-- Bouton d'inscription -->
+            <button type="submit" class="btn">
+                <i class="fas fa-user-plus me-2"></i> S'inscrire
+            </button>
+        </form>
+
+        <!-- Lien pour connexion -->
+        <div class="link">
+            Déjà inscrit ? <a href="{{ url_for('auth.connexion') }}">Se connecter</a>
+        </div>
+    </div>
+</body>
+</html>

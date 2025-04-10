@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Titre principal -->
+    <h1 class="text-center text-primary fw-bold mb-4">Résultats de recherche</h1>
+    <p class="text-center text-secondary mb-3">
+        Recherche pour : <strong>{{ query }}</strong>
+    </p>
+
+    <!-- Affichage du nombre total de résultats -->
+    {% if produits %}
+    <p class="text-center text-success fw-bold">
+        <i class="fas fa-check-circle me-2"></i> {{ produits|length }} résultat{% if produits|length > 1 %}s{% endif %} trouvé{% if produits|length > 1 %}s{% endif %}.
+    </p>
+    <div class="row g-4">
+        {% for produit in produits %}
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <img src="{{ produit.photo_url or url_for('static', filename='images/default-product.png') }}" class="card-img-top rounded-top" alt="{{ produit.nom_produit }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary fw-bold">{{ produit.nom_produit }}</h5>
+                    <p class="card-text text-muted">{{ produit.description[:100] }}{% if produit.description|length > 100 %}...{% endif %}</p>
+                    <a href="{{ url_for('main.detail_produit', produit_id=produit.id_produit) }}" class="btn btn-outline-primary mt-auto">
+                        <i class="fas fa-info-circle me-2"></i> Voir le produit
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-danger text-center mt-4">
+        <i class="fas fa-exclamation-circle me-2"></i> Aucun produit trouvé pour votre recherche.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

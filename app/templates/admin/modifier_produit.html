@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Modifier le produit : {{ produit.nom_produit }}</h2>
+    <form method="POST" action="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.nom_produit.label }}
+            {{ form.nom_produit(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label }}
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.prix_produit.label }}
+            {{ form.prix_produit(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.categorie.label }}
+            {{ form.categorie(class="form-select") }}
+        </div>
+        <div class="mb-3">
+            {{ form.photo_url.label }}
+            {{ form.photo_url(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier</button>
+        <a href="{{ url_for('admin.gestion_produits') }}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

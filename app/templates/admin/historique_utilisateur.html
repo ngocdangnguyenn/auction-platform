@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Historique des mises de {{ utilisateur.prenom }}</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID Enchère</th>
+                <th>Prix proposé</th>
+                <th>Jetons utilisés</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mise in mises %}
+            <tr>
+                <td>{{ mise.enchere_id }}</td>
+                <td>{{ mise.prix_propose }}</td>
+                <td>{{ mise.jetons_utilises }}</td>
+                <td>{{ mise.date_mise }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

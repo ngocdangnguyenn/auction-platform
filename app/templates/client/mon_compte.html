@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Compte{% endblock %}
+
+{% block content %}
+<header class="bg-primary text-white py-4 shadow">
+    <div class="container text-center">
+        <h1 class="h2 fw-bold">Mon Compte</h1>
+    </div>
+</header>
+
+<div class="container my-5">
+    <form method="POST" action="{{ url_for('client.mon_compte') }}" class="p-4 border rounded shadow-sm bg-light">
+        {{ form.hidden_tag() }}
+
+        <!-- Champ Nom -->
+        <div class="mb-4">
+            <label for="nom" class="form-label fw-bold">Nom</label>
+            {{ form.nom(class="form-control shadow-sm", value=current_user.nom) }}
+        </div>
+
+        <!-- Champ Prénom -->
+        <div class="mb-4">
+            <label for="prenom" class="form-label fw-bold">Prénom</label>
+            {{ form.prenom(class="form-control shadow-sm", value=current_user.prenom) }}
+        </div>
+
+        <!-- Champ Email -->
+        <div class="mb-4">
+            <label for="email" class="form-label fw-bold">Email</label>
+            {{ form.email(class="form-control shadow-sm", value=current_user.email) }}
+        </div>
+
+        <!-- Champ Adresse -->
+        <div class="mb-4">
+            <label for="adresse" class="form-label fw-bold">Adresse</label>
+            {{ form.adresse(class="form-control shadow-sm", value=current_user.adresse) }}
+        </div>
+
+        <!-- Champ Code postal -->
+        <div class="mb-4">
+            <label for="code_postal" class="form-label fw-bold">Code postal</label>
+            {{ form.code_postal(class="form-control shadow-sm", value=current_user.code_postal) }}
+        </div>
+
+        <!-- Champ Ville -->
+        <div class="mb-4">
+            <label for="ville" class="form-label fw-bold">Ville</label>
+            {{ form.ville(class="form-control shadow-sm", value=current_user.ville) }}
+        </div>
+
+        <!-- Champ Pays -->
+        <div class="mb-4">
+            <label for="pays" class="form-label fw-bold">Pays</label>
+            {{ form.pays(class="form-control shadow-sm", value=current_user.pays) }}
+        </div>
+
+        <!-- Champ Téléphone -->
+        <div class="mb-4">
+            <label for="telephone" class="form-label fw-bold">Téléphone</label>
+            {{ form.telephone(class="form-control shadow-sm", value=current_user.telephone) }}
+        </div>
+
+        <!-- Bouton Mettre à jour -->
+        <button type="submit" class="btn btn-success w-100 py-3 shadow-sm">
+            <i class="fas fa-save me-2"></i> Mettre à jour
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Client</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Tableau de bord - Bienvenue {{ current_user.prenom }}</h1>
+    </header>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <h2>Résumé de votre compte</h2>
+        <ul>
+            <li><strong>Solde de jetons :</strong> {{ current_user.solde_jetons }} jetons</li>
+            <li><strong>Enchères en cours :</strong> {{ encheres_en_cours|length }}</li>
+            <li><strong>Enchères gagnées :</strong> {{ encheres_gagnees|length }}</li>
+        </ul>
+
+        <h2>Actions rapides</h2>
+        <ul>
+            <li><a href="{{ url_for('client.mes_encheres') }}">Voir mes enchères</a></li>
+            <li><a href="{{ url_for('client.acheter_jetons') }}">Acheter des jetons</a></li>
+            <li><a href="{{ url_for('client.mon_compte') }}">Mettre à jour mes informations</a></li>
+        </ul>
+
+        <h2>Enchères en cours</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix actuel</th>
+                    <th>Date de fin</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enchere in encheres_en_cours %}
+                <tr>
+                    <td>{{ enchere.produit.nom }}</td>
+                    <td>{{ enchere.prix_actuel }} €</td>
+                    <td>{{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>En cours</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">Aucune enchère en cours.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>&copy; 2025 Votre Projet Web</p>
+    </footer>
+</body>
+</html>

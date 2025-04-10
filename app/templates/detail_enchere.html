@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Détail de l'Enchère{% endblock %}
+
+{% block content %}
+<header class="bg-primary text-white py-4 shadow">
+    <div class="container text-center">
+        <h1 class="h2 fw-bold">Détail de l'Enchère</h1>
+    </div>
+</header>
+
+<div class="container my-5">
+    <!-- Section principale -->
+    <div class="row align-items-center">
+        <!-- Image du produit -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card border-0 shadow-sm">
+                <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
+                     class="card-img-top rounded" 
+                     alt="{{ enchere.produit.nom_produit }}">
+            </div>
+        </div>
+
+        <!-- Détails de l'enchère -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 bg-light">
+                <h2 class="card-title text-primary fw-bold">{{ enchere.produit.nom_produit }}</h2>
+                <hr>
+                <p><strong>Description :</strong> {{ enchere.produit.description }}</p>
+                <p><strong>Prix de départ :</strong> <span class="badge bg-success">{{ enchere.prix_depart }} €</span></p>
+                <p><strong>Prix actuel :</strong> <span class="badge bg-warning text-dark">{{ enchere.produit.prix_produit }} €</span></p>
+                <p><strong>Date de fin :</strong> <i class="fas fa-calendar-alt"></i> {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
+                <p><strong>Jetons requis :</strong> <i class="fas fa-coins text-warning"></i> {{ enchere.jetons_requis }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire pour placer une enchère -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm p-4 bg-light">
+                <h3 class="text-primary fw-bold"><i class="fas fa-gavel me-2"></i> Placer une enchère</h3>
+                <hr>
+                <form method="POST" action="{{ url_for('client.placer_enchere', enchere_id=enchere.id_enchere) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label for="montant" class="form-label">Montant de l'enchère (€)</label>
+                        {{ form.montant(class="form-control shadow-sm", placeholder="Entrez votre montant ici...") }}
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2">
+                        <i class="fas fa-paper-plane me-2"></i> Placer l'enchère
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

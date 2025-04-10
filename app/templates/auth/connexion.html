@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding-right: 4rem;
+        }
+        .form-container h1 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333333;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #555555;
+        }
+        .form-control {
+            font-size: 1.1rem;
+            padding: 12px 15px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .btn {
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 1.2rem;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Connexion</h1>
+
+        <!-- Messages Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container mb-4">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <i class="fas fa-info-circle"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Formulaire de connexion -->
+        <form method="POST" action="{{ url_for('auth.connexion') }}">
+            {{ form.hidden_tag() }}
+
+            <!-- Champ Email -->
+            <label for="email" class="form-label">Email</label>
+            {{ form.email(class="form-control", placeholder="Entrez votre email") }}
+
+            <!-- Champ Mot de passe -->
+            <label for="mot_de_passe" class="form-label">Mot de passe</label>
+            {{ form.mot_de_passe(class="form-control", placeholder="Entrez votre mot de passe") }}
+
+            <!-- Option Se souvenir de moi -->
+            <div class="form-check mb-4">
+                {{ form.se_souvenir(class="form-check-input") }}
+                <label for="se_souvenir" class="form-check-label text-muted">Se souvenir de moi</label>
+            </div>
+
+            <!-- Bouton de connexion -->
+            <button type="submit" class="btn">
+                <i class="fas fa-sign-in-alt me-2"></i> Se connecter
+            </button>
+        </form>
+
+        <!-- Lien inscription -->
+        <div class="link">
+            Pas encore inscrit ? <a href="{{ url_for('auth.inscription') }}">Créer un compte</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5 p-5 rounded shadow-lg" style="background: linear-gradient(to right, #f8f9fa, #e9ecef);">
+  <h1 class="mb-5 text-center text-primary fw-bold"><i class="fas fa-question-circle me-2"></i> Foire Aux Questions (FAQ)</h1>
+
+  <div class="accordion" id="faqAccordion">
+    
+    <!-- Question 1 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading1">
+        <button class="accordion-button fs-5 fw-bold text-white bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+            <i class="fas fa-gavel me-2"></i> Comment fonctionne une enchère au centime près ?
+        </button>
+      </h2>
+      <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+        <div class="accordion-body bg-white rounded shadow-sm">
+          Dans une enchère au centime près, chaque utilisateur peut proposer un montant (en centimes) en utilisant ses jetons. 
+          Le principe est simple mais stratégique : l'enchère est remportée par le participant qui a proposé le **plus petit montant unique**. 
+          Cela signifie que si deux utilisateurs proposent le même montant, celui-ci est disqualifié. 
+          Par conséquent, il faut non seulement être le plus bas, mais aussi être **le seul à avoir misé ce montant**.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="accordion-item mt-4">
+      <h2 class="accordion-header" id="heading2">
+        <button class="accordion-button collapsed fs-5 fw-bold text-white bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+            <i class="fas fa-times-circle me-2"></i> Que se passe-t-il si je ne gagne pas ?
+        </button>
+      </h2>
+      <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body bg-white rounded shadow-sm">
+          Si vous ne gagnez pas une enchère, ne vous inquiétez pas : les jetons que vous avez utilisés pour cette mise sont 
+          automatiquement recrédités sur votre compte. Cela vous permet de retenter votre chance sur d'autres enchères 
+          sans perdre inutilement vos jetons, à condition que votre mise n'ait pas été gagnante.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="accordion-item mt-4">
+      <h2 class="accordion-header" id="heading3">
+        <button class="accordion-button collapsed fs-5 fw-bold text-white bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+            <i class="fas fa-coins me-2"></i> Comment acheter des jetons ?
+        </button>
+      </h2>
+      <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body bg-white rounded shadow-sm">
+          Pour participer aux enchères, vous avez besoin de jetons. Vous pouvez acheter des packs de jetons en vous rendant dans la section 
+          <strong>"Acheter des jetons"</strong> depuis votre espace personnel. Plusieurs packs sont disponibles, avec des tarifs différents selon 
+          la quantité souhaitée. Le paiement est sécurisé et immédiat. Une fois l’achat effectué, vos jetons sont ajoutés à votre solde.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="accordion-item mt-4">
+      <h2 class="accordion-header" id="heading4">
+        <button class="accordion-button collapsed fs-5 fw-bold text-white bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+            <i class="fas fa-tasks me-2"></i> Est-ce que je peux suivre mes enchères et mes achats ?
+        </button>
+      </h2>
+      <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body bg-white rounded shadow-sm">
+          Oui, absolument. Une fois connecté(e), vous avez accès à votre tableau de bord personnel qui vous permet de suivre toutes vos activités : 
+          vos mises passées, vos enchères gagnées ou perdues, ainsi que l'historique de vos achats de jetons. Vous y trouverez aussi vos informations 
+          de compte et vous pourrez les modifier à tout moment pour personnaliser votre expérience.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

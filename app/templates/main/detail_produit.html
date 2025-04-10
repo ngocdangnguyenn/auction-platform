@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ produit.nom_produit }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ produit.nom_produit }}</h1>
+    <img src="{{ produit.photo_url or url_for('static', filename='images/default-product.png') }}" alt="{{ produit.nom_produit }}" class="img-fluid mb-4">
+    <p><strong>Description :</strong> {{ produit.description }}</p>
+    <p><strong>Prix :</strong> {{ produit.prix_produit }} €</p>
+    <a href="{{ url_for('main.rechercher_produits') }}" class="btn btn-secondary">Retour à la recherche</a>
+</div>
+{% endblock %}

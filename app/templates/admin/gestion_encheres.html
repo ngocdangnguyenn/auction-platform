@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Enchères{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Liste des enchères -->
+    <section>
+        <h3 class="text-secondary fw-bold mb-3">Liste des Enchères Actuelles</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Produit</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th>Jetons requis</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enchere in encheres %}
+                    <tr>
+                        <td class="text-center">{{ enchere.id_enchere }}</td>
+                        <td>{{ enchere.produit.nom_produit }}</td>
+                        <td class="text-center">{{ enchere.date_debut.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td class="text-center">{{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td class="text-center">{{ enchere.jetons_requis }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('admin.modifier_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-sm btn-outline-warning me-2">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <form action="{{ url_for('admin.supprimer_enchere', enchere_id=enchere.id_enchere) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette enchère ?');">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">Aucune enchère disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Ajouter une nouvelle enchère -->
+    <section class="mt-5">
+        <h3 class="text-secondary fw-bold mb-3">Ajouter une Nouvelle Enchère</h3>
+        <form method="POST" action="{{ url_for('admin.gestion_encheres') }}" class="p-4 border rounded shadow-sm bg-light">
+            {{ form.csrf_token }}
+            <div class="mb-3">
+                <label for="produit" class="form-label">Produit</label>
+                {{ form.produit(class="form-select shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="date_debut" class="form-label">Date de début</label>
+                {{ form.date_debut(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="date_fin" class="form-label">Date de fin</label>
+                {{ form.date_fin(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="jetons_requis" class="form-label">Jetons requis</label>
+                {{ form.jetons_requis(class="form-control shadow-sm") }}
+            </div>
+            <div class="mb-3">
+                <label for="prix_depart" class="form-label">Prix départ</label>
+                {{ form.prix_depart(class="form-control shadow-sm") }}
+            </div>
+            <button type="submit" class="btn btn-success w-100 py-2">
+                <i class="fas fa-plus-circle me-2"></i> Ajouter l'Enchère
+            </button>
+        </form>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Enchères{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <section class="jumbotron bg-light p-5 rounded shadow-sm text-center">
+        <h1 class="display-4 text-primary fw-bold">Bienvenue sur AuctionTech</h1>
+        <p class="lead text-secondary">Proposez le prix unique le plus bas et remportez des produits high-tech à prix mini !</p>
+    </section>
+    <!-- Titre principal -->
+    <h2 class="text-center text-primary fw-bold mb-4">Enchères récentes</h1>
+
+    <!-- Carrousel des enchères -->
+    <div class="position-relative">
+        <div id="caroussel-container" class="overflow-hidden">
+            <div id="caroussel" class="d-flex">
+                {% for enchere in encheres[:4] %}
+                <div class="caroussel-item card m-3 shadow-sm" style="width: 300px; flex-shrink: 0;">
+                    <div>
+                        {% if enchere.produit.photo_url %}
+                        <img src="{{ enchere.produit.photo_url }}" alt="{{ enchere.produit.nom_produit }}" class="card-img-top rounded-top" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='images/default-product.png') }}" alt="Image par défaut" class="card-img-top rounded-top" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-primary">{{ enchere.produit.nom_produit }}</h5>
+                        <p class="card-text text-muted">{{ enchere.produit.description[:50] }}{% if enchere.produit.description|length > 50 %}...{% endif %}</p>
+                        <p class="text-secondary"><i class="fas fa-calendar-alt me-2"></i> Fin : {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
+                        <p class="text-secondary"><i class="fas fa-coins me-2"></i> Jetons requis : {{ enchere.jetons_requis }}</p>
+                        <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-outline-primary">Voir l'enchère</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Boutons de navigation -->
+        <button id="prev-btn" class="caroussel-btn position-absolute start-0 top-50 translate-middle-y" disabled>
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="next-btn" class="caroussel-btn position-absolute end-0 top-50 translate-middle-y">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- Indicateurs de page -->
+    <div class="d-flex justify-content-center my-3">
+        {% for i in range(4) %}
+        <span class="pagination-dot {% if i == 0 %}active{% endif %}" data-index="{{ i }}"></span>
+        {% endfor %}
+    </div>
+
+    <!-- Lien vers toutes les enchères -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.toutes_encheres') }}" class="btn btn-primary">
+            <i class="fas fa-list me-2"></i> Voir toutes les enchères
+        </a>
+    </div>
+</div>
+
+<!-- Styles CSS -->
+<style>
+    #caroussel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    }
+
+    #caroussel {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        
+    }
+
+    .caroussel-item {
+        flex-shrink: 0;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .caroussel-btn {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        z-index: 10;
+        cursor: pointer;
+    }
+
+    .caroussel-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .pagination-dot {
+        width: 10px;
+        height: 10px;
+        background-color: gray;
+        border-radius: 50%;
+        margin: 0 5px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .pagination-dot.active {
+        background-color: blue;
+    }
+
+</style>
+
+<!-- Script JavaScript -->
+<script>
+    const caroussel = document.querySelector("#caroussel");
+    const prevBtn = document.querySelector("#prev-btn");
+    const nextBtn = document.querySelector("#next-btn");
+    const dots = document.querySelectorAll(".pagination-dot");
+    let currentIndex = 0;
+
+    function updateCaroussel() {
+        const offset = currentIndex * -300; // Chaque carte a 300px de largeur
+        caroussel.style.transform = `translateX(${offset}px)`;
+
+        // Activer/Désactiver les boutons
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === dots.length - 1;
+
+        // Mettre à jour les indicateurs
+        dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === currentIndex);
+        });
+    }
+
+    prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCaroussel();
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        if (currentIndex < dots.length - 1) {
+            currentIndex++;
+            updateCaroussel();
+        }
+    });
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+            currentIndex = index;
+            updateCaroussel();
+        });
+    });
+</script>
+
+{% endblock %}
