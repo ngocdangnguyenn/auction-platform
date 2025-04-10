@@ -62,7 +62,10 @@ class Enchere(db.Model):
     date_debut = db.Column(db.DateTime, default=datetime.utcnow)
     date_fin = db.Column(db.DateTime, nullable=False)
     jetons_requis = db.Column(db.Integer, nullable=False)  # Changé en Integer pour simplifier
-    statut = db.Column(db.Enum('ouverte', 'terminee', 'annulee'), default='ouverte')
+    statut = db.Column(
+    db.Enum('ouverte', 'terminee', 'annulee', name="statut_enum"),
+    default='ouverte',
+    nullable=False)
     gagnant_id = db.Column(db.Integer, db.ForeignKey('utilisateur.id_utilisateur'), nullable=True)
     prix_gagnant = db.Column(db.Numeric(10, 2), nullable=True)
     prix_depart = db.Column(db.Numeric(10, 2), nullable=False)  # Prix proposé par le gagnant
