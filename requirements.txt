@@ -6,3 +6,11 @@ Flask-Login
 Flask-Migrate
 Flask-Bootstrap
 pymysql
+psycopg2-binary
+Flask-Mail
+Flask-Admin
+Flask-RESTful
+Flask-Cors
+Flask-Session
+Flask-Cache
+Flask-Uploads
