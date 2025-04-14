@@ -84,8 +84,8 @@ def mes_encheres():
     encheres = db.session.query(Enchere, Mise).join(Mise).filter(
         Mise.utilisateur_id == current_user.id_utilisateur
     ).order_by(Enchere.date_fin.desc()).all()
-    now = datetime.utcnow()
-    return render_template('client/mes_encheres.html', encheres=encheres, now=now)
+    current_time = datetime.utcnow()
+    return render_template('client/mes_encheres.html', encheres=encheres, current_time=current_time)    
 
 @client.route('/acheter_jetons', methods=['GET', 'POST'])
 @login_required

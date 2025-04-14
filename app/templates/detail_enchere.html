@@ -3,56 +3,81 @@
 {% block title %}Détail de l'Enchère{% endblock %}
 
 {% block content %}
-<header class="bg-primary text-white py-4 shadow">
+<!-- En-tête élégant avec dégradé -->
+<header class="bg-primary bg-gradient text-white py-4 shadow-sm">
     <div class="container text-center">
-        <h1 class="h2 fw-bold">Détail de l'Enchère</h1>
+        <h1 class="display-5 fw-bold">Détail de l'Enchère</h1>
+        <p class="lead">Un aperçu complet de votre opportunité d'enchérir</p>
     </div>
 </header>
 
 <div class="container my-5">
-    <!-- Section principale -->
-    <div class="row align-items-center">
-        <!-- Image du produit -->
-        <div class="col-md-6 mb-4 mb-md-0">
-            <div class="card border-0 shadow-sm">
+    <!-- Section principale : Image et Détails du produit -->
+    <div class="row g-5 align-items-center">
+        <!-- Image du produit avec un effet de survol -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow rounded overflow-hidden">
                 <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
-                     class="card-img-top rounded" 
-                     alt="{{ enchere.produit.nom_produit }}">
+                     class="img-fluid" 
+                     alt="{{ enchere.produit.nom_produit }}"
+                     style="object-fit: cover; height: 350px; width: 100%; transition: transform 0.3s;">
             </div>
         </div>
-
         <!-- Détails de l'enchère -->
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-4 bg-light">
-                <h2 class="card-title text-primary fw-bold">{{ enchere.produit.nom_produit }}</h2>
+        <div class="col-lg-6">
+            <div class="card p-4 border-0 shadow-sm bg-light">
+                <h2 class="fw-bold text-primary">{{ enchere.produit.nom_produit }}</h2>
                 <hr>
-                <p><strong>Description :</strong> {{ enchere.produit.description }}</p>
-                <p><strong>Prix de départ :</strong> <span class="badge bg-success">{{ enchere.prix_depart }} €</span></p>
-                <p><strong>Prix actuel :</strong> <span class="badge bg-warning text-dark">{{ enchere.produit.prix_produit }} €</span></p>
-                <p><strong>Date de fin :</strong> <i class="fas fa-calendar-alt"></i> {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
-                <p><strong>Jetons requis :</strong> <i class="fas fa-coins text-warning"></i> {{ enchere.jetons_requis }}</p>
+                <p class="mb-3"><strong>Description :</strong> {{ enchere.produit.description }}</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <strong>Prix de départ :</strong> 
+                        <span class="badge bg-success fs-6">{{ enchere.prix_depart }} €</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Prix actuel :</strong> 
+                        <span class="badge bg-warning text-dark fs-6">{{ enchere.produit.prix_produit }} €</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Date de fin :</strong> 
+                        <i class="fas fa-calendar-alt me-1"></i> {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Jetons requis :</strong> 
+                        <i class="fas fa-coins text-warning me-1"></i> {{ enchere.jetons_requis }}
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
     <!-- Formulaire pour placer une enchère -->
     <div class="row mt-5">
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="card border-0 shadow-sm p-4 bg-light">
-                <h3 class="text-primary fw-bold"><i class="fas fa-gavel me-2"></i> Placer une enchère</h3>
+                <h3 class="fw-bold text-primary mb-3">
+                    <i class="fas fa-gavel me-2"></i> Placer une enchère
+                </h3>
                 <hr>
                 <form method="POST" action="{{ url_for('client.placer_enchere', enchere_id=enchere.id_enchere) }}">
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
-                        <label for="montant" class="form-label">Montant de l'enchère (€)</label>
-                        {{ form.montant(class="form-control shadow-sm", placeholder="Entrez votre montant ici...") }}
+                        <label for="montant" class="form-label">Votre offre (€)</label>
+                        {{ form.montant(class="form-control form-control-lg shadow", placeholder="Entrez votre montant ici...") }}
                     </div>
-                    <button type="submit" class="btn btn-success w-100 py-2">
-                        <i class="fas fa-paper-plane me-2"></i> Placer l'enchère
+                    <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm">
+                        <i class="fas fa-paper-plane me-2"></i> Envoyer mon offre
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Optionnel : Animation CSS pour l'image au survol -->
+<style>
+    .card img:hover {
+        transform: scale(1.05);
+    }
+</style>
 {% endblock %}

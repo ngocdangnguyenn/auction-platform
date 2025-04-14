@@ -40,14 +40,15 @@
             <td>{{ mise.prix_propose }} €</td>
             <td>{{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}</td>
             <td>
-                {% if enchere.date_fin < now %}
-                    {% if enchere.gagnant_id == current_user.id_utilisateur %}
-                        <span class="badge bg-success">Gagnée</span>
-                    {% else %}
-                        <span class="badge bg-danger">Perdue</span>
-                    {% endif %}
-                {% else %}
+                {% set delta = enchere.date_fin - current_time %}
+                {% if delta.total_seconds() > 0 %}
                     <span class="badge bg-warning text-dark">En cours</span>
+                {% elif enchere.gagnant_id == current_user.id_utilisateur %}
+                    <span class="badge bg-success">Gagnée</span>
+                {% elif enchere.gagnant_id is not none %}
+                    <span class="badge bg-danger">Perdue</span>
+                {% else %}
+                    <span class="badge bg-secondary">Terminée sans gagnant</span>
                 {% endif %}
             </td>
         </tr>

@@ -62,10 +62,7 @@ class Enchere(db.Model):
     date_debut = db.Column(db.DateTime, default=datetime.utcnow)
     date_fin = db.Column(db.DateTime, nullable=False)
     jetons_requis = db.Column(db.Integer, nullable=False)  # Changé en Integer pour simplifier
-    statut = db.Column(
-    db.Enum('ouverte', 'terminee', 'annulee', name="statut_enum"),
-    default='ouverte',
-    nullable=False)
+    statut = db.Column(db.Enum('ouverte', 'terminee', 'annulee'), default='ouverte')
     gagnant_id = db.Column(db.Integer, db.ForeignKey('utilisateur.id_utilisateur'), nullable=True)
     prix_gagnant = db.Column(db.Numeric(10, 2), nullable=True)
     prix_depart = db.Column(db.Numeric(10, 2), nullable=False)  # Prix proposé par le gagnant
@@ -115,8 +112,6 @@ class Enchere(db.Model):
                 notification = Notification(
                     utilisateur_id=mise_gagnante.utilisateur_id,
                     message=f"Félicitations ! Vous avez gagné l'enchère sur le produit '{self.produit.nom_produit}'.",
-                    date_creation=datetime.utcnow(),
-                    lue=False,
                     type_notification='unique'
                 )
                 db.session.add(notification)

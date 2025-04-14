@@ -17,6 +17,8 @@ def index():
     
     return render_template('index.html', encheres=encheres_actives, title='Accueil')
 
+from datetime import datetime
+
 @main.route('/enchere/<int:enchere_id>', methods=['GET', 'POST'])
 def detail_enchere(enchere_id):
     """Détail d'une enchère spécifique"""
@@ -34,13 +36,17 @@ def detail_enchere(enchere_id):
             utilisateur_id=current_user.id_utilisateur
         ).order_by(Mise.date_mise.desc()).all()
 
+    # Passage de l'heure actuelle pour calculer le temps restant dans le template
+    current_time = datetime.utcnow()
+
     return render_template(
         'detail_enchere.html',
         enchere=enchere,
         produit=produit,
         mises_utilisateur=mises_utilisateur,
         form=form,  # Passer le formulaire au template
-        title=f'Enchère - {produit.nom_produit}'
+        title=f'Enchère - {produit.nom_produit}',
+        current_time=current_time
     )
 
 @main.route('/comment-ca-marche')
