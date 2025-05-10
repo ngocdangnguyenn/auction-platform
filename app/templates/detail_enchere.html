@@ -32,11 +32,6 @@
                         <strong>Statut :</strong>
                         {% if enchere.statut == 'terminee' %}
                             <span class="badge bg-danger">Enchère terminée</span>
-                            {% if enchere.gagnant_id %}
-                                <span class="badge bg-info">Prix gagnant: {{ enchere.prix_gagnant }}€</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Aucun gagnant</span>
-                            {% endif %}
                         {% else %}
                             <span class="badge bg-success">En cours</span>
                             <span id="countdown" class="badge bg-warning text-dark">
@@ -59,6 +54,10 @@
                     <li class="mb-2">
                         <strong>Prix actuel :</strong> 
                         <span class="badge bg-warning text-dark fs-6">{{ enchere.produit.prix_produit }} €</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Date de début :</strong> 
+                        <i class="fas fa-calendar-check me-1"></i> {{ enchere.date_debut.strftime('%d/%m/%Y à %H:%M') }}
                     </li>
                     <li class="mb-2">
                         <strong>Date de fin :</strong> 
@@ -114,11 +113,6 @@
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     <h4 class="alert-heading"><i class="fas fa-info-circle"></i> Enchère terminée</h4>
-                    {% if enchere.gagnant_id %}
-                        <p>Cette enchère a été remportée pour {{ enchere.prix_gagnant }}€</p>
-                    {% else %}
-                        <p>Cette enchère s'est terminée sans gagnant</p>
-                    {% endif %}
                 </div>
             </div>
         </div>

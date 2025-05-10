@@ -17,13 +17,9 @@ class Utilisateur(db.Model, UserMixin):
     telephone = db.Column(db.String(20), nullable=False)
     solde_jetons = db.Column(db.Integer, default=5)
     role = db.Column(db.Enum('client', 'admin'), default='client')
-    date_inscription = db.Column(db.DateTime, default=datetime.utcnow)
-    est_suspendu = db.Column(db.Boolean, default=False)
     
     # Relations
     mises = db.relationship('Mise', backref='utilisateur', lazy=True)
-    transactions = db.relationship('Transaction', backref='utilisateur', lazy=True)
-    encheres_gagnees = db.relationship('Enchere', backref='gagnant', lazy=True, foreign_keys='Enchere.gagnant_id')
 
     def get_id(self):
         return str(self.id_utilisateur)
@@ -46,7 +42,6 @@ class Produit(db.Model):
     prix_produit = db.Column(db.Numeric(10, 2), nullable=False)
     photo_url = db.Column(db.String(255))
     categorie = db.Column(db.String(50), nullable=False)
-    date_ajout = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):
         return f"<Produit {self.nom_produit}>"
@@ -57,22 +52,21 @@ class Enchere(db.Model):
     date_debut = db.Column(db.DateTime, default=datetime.utcnow)
     date_fin = db.Column(db.DateTime, nullable=False)
     jetons_requis = db.Column(db.Integer, nullable=False)
-    statut = db.Column(db.Enum('ouverte', 'terminee', 'annulee'), default='ouverte')
+    statut = db.Column(db.Enum('ouverte', 'terminee'), default='ouverte')
     gagnant_id = db.Column(db.Integer, db.ForeignKey('utilisateur.id_utilisateur'), nullable=True)
-    prix_gagnant = db.Column(db.Numeric(10, 2), nullable=True)
     prix_depart = db.Column(db.Numeric(10, 2), nullable=False)
     
     # Relations
     produit = db.relationship('Produit', backref='encheres')
     mises = db.relationship('Mise', backref='enchere', lazy=True)
+    utilisateur_gagnant = db.relationship(
+        'Utilisateur', 
+        foreign_keys=[gagnant_id],
+        backref=db.backref('encheres_gagnees', lazy=True)
+    )
 
     def __repr__(self):
         return f"<Enchere #{self.id_enchere} - Produit: {self.produit.nom_produit}>"
-    
-    def determine_gagnant(self):
-        """Détermine le gagnant de l'enchère"""
-        from app.services.enchere_service import determiner_gagnant_enchere
-        return determiner_gagnant_enchere(self)
 
 
 class Mise(db.Model):
@@ -81,8 +75,6 @@ class Mise(db.Model):
     utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateur.id_utilisateur'), nullable=False)
     prix_propose = db.Column(db.Numeric(10, 2), nullable=False)
     date_mise = db.Column(db.DateTime, default=datetime.utcnow)
-    jetons_utilises = db.Column(db.Integer, nullable=False)
-    remboursee = db.Column(db.Boolean, default=False)
     
     def __repr__(self):
         return f"<Mise de {self.utilisateur.prenom} sur enchère #{self.enchere_id}: {self.prix_propose}€>"
@@ -94,10 +86,6 @@ class PackJetons(db.Model):
     nom_pack = db.Column(db.String(50), nullable=False)
     nombre_jetons = db.Column(db.Integer, nullable=False)
     prix_pack = db.Column(db.Numeric(10, 2), nullable=False)
-    actif = db.Column(db.Boolean, default=True)
-    
-    # Relations
-    transactions = db.relationship('Transaction', backref='pack', lazy=True)
     
     def __repr__(self):
         return f"<PackJetons {self.nom_pack}: {self.nombre_jetons} jetons pour {self.prix_pack}€>"
@@ -114,14 +102,3 @@ class Notification(db.Model):
     def __repr__(self):
         return f"<Notification pour {self.utilisateur_id}: {self.message}>"
     
-class Transaction(db.Model):
-    id_transaction = db.Column(db.Integer, primary_key=True)
-    utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateur.id_utilisateur'), nullable=False)
-    pack_id = db.Column(db.Integer, db.ForeignKey('packjetons.id_pack'), nullable=True)  # Peut être null pour les jetons gratuits
-    date_transaction = db.Column(db.DateTime, default=datetime.utcnow)
-    nombre_jetons = db.Column(db.Integer, nullable=False)
-    montant = db.Column(db.Numeric(10, 2), nullable=True)  # Peut être null pour les jetons gratuits
-    type_transaction = db.Column(db.Enum('achat', 'utilisation', 'remboursement', 'offert'), nullable=False)
-    
-    def __repr__(self):
-        return f"<Transaction {self.type_transaction} de {self.nombre_jetons} jetons pour {self.utilisateur.prenom}>"

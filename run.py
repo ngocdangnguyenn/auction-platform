@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import Utilisateur, Produit, Enchere, Mise, PackJetons, Transaction
+from app.models import Utilisateur, Produit, Enchere, Mise, PackJetons
 
 app = create_app()
 
@@ -13,7 +13,6 @@ def make_shell_context():
         'Enchere': Enchere,
         'Mise': Mise,
         'PackJetons': PackJetons,
-        'Transaction': Transaction,
     }
 
 if __name__ == '__main__':

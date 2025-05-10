@@ -10,7 +10,6 @@ from app.client.forms import (
     ModifierMotDePasseForm
 )
 from app.models import Enchere, Mise, Notification, PackJetons, Produit
-from app.services.enchere_service import determiner_gagnant_enchere, verifier_statut_enchere
 
 client = Blueprint('client', __name__)
 

@@ -1,9 +1,10 @@
 from datetime import datetime
+import traceback
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user
 from app import db
 from app.client.forms import PlacerEnchereForm
-from app.models import Enchere, Produit, Mise
+from app.models import Enchere, Notification, Produit, Mise
 
 main = Blueprint('main', __name__)
 
@@ -21,36 +22,28 @@ def index():
                          encheres=encheres_actives, 
                          title='Accueil')
 
-@main.route('/enchere/<int:enchere_id>', methods=['GET', 'POST'])
+@main.route('/enchere/<int:enchere_id>')
 def detail_enchere(enchere_id):
-    """Détail d'une enchère spécifique"""
-    enchere = Enchere.query.get_or_404(enchere_id)
+    """Affiche le détail d'une enchère"""
+    enchere = Enchere.query.options(
+        db.joinedload(Enchere.produit),
+        db.joinedload(Enchere.utilisateur_gagnant)
+    ).get_or_404(enchere_id)
+
+    # Vérifier et finaliser l'enchère si nécessaire
+    if enchere.date_fin <= datetime.utcnow() and enchere.statut != 'terminee':
+        from app.services.enchere_service import verifier_et_finaliser_enchere
+        verifier_et_finaliser_enchere(enchere)
+        db.session.refresh(enchere)
+
     form = PlacerEnchereForm(enchere_id=enchere.id_enchere)
-
-    from app.services.enchere_service import verifier_statut_enchere
-    if verifier_statut_enchere(enchere):
-        if enchere.statut == 'terminee' and not enchere.prix_gagnant:
-            success = enchere.determine_gagnant()
-            if success:
-                db.session.refresh(enchere)
-    
-    mises_utilisateur = []
-    if current_user.is_authenticated:
-        mises_utilisateur = Mise.query.filter_by(
-            enchere_id=enchere_id,
-            utilisateur_id=current_user.id_utilisateur
-        ).order_by(Mise.date_mise.desc()).all()
-
     return render_template(
         'detail_enchere.html',
         enchere=enchere,
-        produit=enchere.produit,
-        mises_utilisateur=mises_utilisateur,
         form=form,
-        title=f'Enchère - {enchere.produit.nom_produit}',
         current_time=datetime.utcnow()
     )
-
+    
 @main.route('/rechercher', methods=['GET'])
 def rechercher_produits():
     """Recherche de produits par nom"""
@@ -127,12 +120,6 @@ def toutes_encheres():
         filter_choice=filter_choice,
         title='Toutes les enchères'
     )
-
-@main.route('/comment-ca-marche')
-def comment_ca_marche():
-    """Page explicative du fonctionnement des enchères"""
-    return render_template('comment_ca_marche.html',
-                         title='Comment ça marche')
 
 @main.route('/a-propos')
 def a_propos():

@@ -1,11 +1,12 @@
+from datetime import datetime
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user
 from app import db
 from app.admin.forms import AjouterEnchereForm, AjouterPackForm, AjouterProduitForm, AttribuerJetonsForm, EnvoyerNotificationForm, ModifierEnchereForm, ModifierPackForm, ModifierProduitForm
-from app.models import Enchere, Mise, Notification, PackJetons, Produit, Utilisateur, Transaction
+from app.models import Enchere, Mise, Notification, PackJetons, Produit, Utilisateur
 from flask_wtf import FlaskForm
 
-from app.services.enchere_service import verifier_statut_enchere
+from app.services.enchere_service import verifier_et_finaliser_enchere
 
 admin = Blueprint('admin', __name__)
 
@@ -41,20 +42,6 @@ def dashboard():
 
     return render_template('index.html', **stats)  # Changed template path
 
-@admin.route('/transactions')
-@login_required
-def transactions():
-    """Gestion des transactions"""
-    if not check_admin_role():
-        return redirect(url_for('main.index'))
-    
-    transactions = Transaction.query.all()
-    return render_template(
-        'admin/transactions.html',
-        title='Gestion des transactions',
-        transactions=transactions
-    )
-
 @admin.route('/gestion_encheres', methods=['GET', 'POST'])
 @login_required
 def gestion_encheres():
@@ -63,8 +50,8 @@ def gestion_encheres():
         return redirect(url_for('main.index'))
     encheres_actives = Enchere.query.filter_by(statut='ouverte').all()
     for enchere in encheres_actives:
-        if verifier_statut_enchere(enchere):
-            enchere.determine_gagnant()
+        if enchere.date_fin <= datetime.utcnow():
+            verifier_et_finaliser_enchere(enchere)
 
     encheres = Enchere.query.options(
         db.joinedload(Enchere.produit)
