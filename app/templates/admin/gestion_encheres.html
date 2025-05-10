@@ -32,6 +32,7 @@
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
                             <form action="{{ url_for('admin.supprimer_enchere', enchere_id=enchere.id_enchere) }}" method="POST" style="display: inline;">
+                                {{ form.csrf_token }}  <!-- Ajout du token CSRF -->
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette enchère ?');">
                                     <i class="fas fa-trash"></i> Supprimer
                                 </button>

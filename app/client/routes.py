@@ -2,26 +2,61 @@ from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import db
-from app.client.forms import AcheterJetonsForm, MarquerLueForm, MonCompteForm, PlacerEnchereForm
+from app.client.forms import (
+    AcheterJetonsForm, 
+    MarquerLueForm, 
+    MonCompteForm, 
+    PlacerEnchereForm,
+    ModifierMotDePasseForm
+)
 from app.models import Enchere, Mise, Notification, PackJetons, Produit
+from app.services.enchere_service import determiner_gagnant_enchere, verifier_statut_enchere
 
 client = Blueprint('client', __name__)
+
+def check_client_role():
+    """Vérifie si l'utilisateur a le rôle client"""
+    if current_user.role != 'client':
+        flash("Vous n'avez pas l'autorisation d'accéder à cette page.", 'danger')
+        return False
+    return True
+
+def get_unread_notifications_count():
+    """Retourne le nombre de notifications non lues"""
+    return Notification.query.filter_by(
+        utilisateur_id=current_user.id_utilisateur, 
+        lue=False
+    ).count()
 
 @client.route('/dashboard')
 @login_required
 def dashboard():
-    if current_user.role != 'client':
-        flash("Vous n'avez pas l'autorisation d'accéder à cette page.", 'danger')
+    """Tableau de bord du client"""
+    if not check_client_role():
         return redirect(url_for('main.index'))
     
-    # Récupérer les enchères en cours et gagnées
-    encheres_en_cours = Enchere.query.filter(Enchere.date_fin > db.func.now()).all()
-    encheres_gagnees = Enchere.query.filter_by(gagnant_id=current_user.id_utilisateur).all()
-    encheres = Enchere.query.filter(Enchere.date_fin > db.func.now()).all()
-    produits_populaires = Produit.query.order_by(Produit.id_produit.desc()).limit(6).all()
+    # Eager load the produit relationship for all queries
+    encheres_en_cours = Enchere.query.options(
+        db.joinedload(Enchere.produit)
+    ).filter(
+        Enchere.date_fin > db.func.now()
+    ).all()
 
-    from app.models import Notification
-    notifications_counts = Notification.query.filter_by(utilisateur_id=current_user.id_utilisateur, lue=False).count()
+    encheres_gagnees = Enchere.query.options(
+        db.joinedload(Enchere.produit)
+    ).filter_by(
+        gagnant_id=current_user.id_utilisateur
+    ).all()
+
+    encheres = Enchere.query.options(
+        db.joinedload(Enchere.produit)
+    ).filter(
+        Enchere.date_fin > db.func.now()
+    ).all()
+
+    produits_populaires = Produit.query.order_by(
+        Produit.id_produit.desc()
+    ).limit(6).all()
 
     return render_template(
         'index.html',
@@ -30,16 +65,17 @@ def dashboard():
         encheres_gagnees=encheres_gagnees,
         encheres=encheres,
         produits_populaires=produits_populaires,
-        notifications_counts=notifications_counts
+        notifications_count=get_unread_notifications_count()
     )
 
 @client.route('/historique')
 @login_required
 def historique():
-    # Enchères gagnées par l'utilisateur
-    encheres_gagnees = Enchere.query.filter_by(gagnant_id=current_user.id_utilisateur).all()
+    """Historique des enchères de l'utilisateur"""
+    encheres_gagnees = Enchere.query.filter_by(
+        gagnant_id=current_user.id_utilisateur
+    ).all()
 
-    # Enchères où l'utilisateur a participé mais n'a pas gagné
     encheres_perdues = Enchere.query.join(Mise).filter(
         Mise.utilisateur_id == current_user.id_utilisateur,
         Enchere.gagnant_id != current_user.id_utilisateur
@@ -54,38 +90,52 @@ def historique():
 @client.route('/mon_compte', methods=['GET', 'POST'])
 @login_required
 def mon_compte():
-    if current_user.role != 'client':
-        flash("Vous n'avez pas l'autorisation d'accéder à cette page.", "danger")
+    """Gestion du compte utilisateur"""
+    if not check_client_role():
         return redirect(url_for('main.index'))
     
-    from app.models import Notification
-    notifications_count = Notification.query.filter_by(utilisateur_id=current_user.id_utilisateur, lue=False).count()
-
     form = MonCompteForm()
     if form.validate_on_submit():
-        # Mettre à jour les informations de l'utilisateur
-        current_user.nom = form.nom.data
-        current_user.prenom = form.prenom.data
-        current_user.email = form.email.data
-        current_user.adresse = form.adresse.data
-        current_user.code_postal = form.code_postal.data
-        current_user.ville = form.ville.data
-        current_user.pays = form.pays.data
-        current_user.telephone = form.telephone.data
+        for field in ['nom', 'prenom', 'email', 'adresse', 
+                     'code_postal', 'ville', 'pays', 'telephone']:
+            setattr(current_user, field, getattr(form, field).data)
+        
         db.session.commit()
         flash('Vos informations ont été mises à jour avec succès.', 'success')
         return redirect(url_for('client.mon_compte'))
-    return render_template('client/mon_compte.html', utilisateur=current_user, notifications_count=notifications_count, form=form)
+
+    return render_template(
+        'client/mon_compte.html', 
+        utilisateur=current_user,
+        notifications_count=get_unread_notifications_count(),
+        form=form
+    )
 
 @client.route('/mes_encheres')
 @login_required
 def mes_encheres():
-    # Récupérer les enchères et les mises associées pour l'utilisateur connecté
-    encheres = db.session.query(Enchere, Mise).join(Mise).filter(
+    """Récupère les enchères et les mises associées pour l'utilisateur connecté"""
+    if not check_client_role():
+        return redirect(url_for('main.index'))
+
+    # Query encheres with their associated mises
+    results = db.session.query(Enchere, Mise).options(
+        db.joinedload(Enchere.produit)
+    ).join(
+        Mise, 
+        Mise.enchere_id == Enchere.id_enchere
+    ).filter(
         Mise.utilisateur_id == current_user.id_utilisateur
     ).order_by(Enchere.date_fin.desc()).all()
+    
     current_time = datetime.utcnow()
-    return render_template('client/mes_encheres.html', encheres=encheres, current_time=current_time)    
+    
+    return render_template(
+        'client/mes_encheres.html',
+        encheres=results,  # This will now be a list of (Enchere, Mise) tuples
+        current_time=current_time,
+        title='Mes enchères'
+    )
 
 @client.route('/acheter_jetons', methods=['GET', 'POST'])
 @login_required
@@ -101,25 +151,6 @@ def acheter_jetons():
             flash(f"Vous avez acheté {pack.nombre_jetons} jetons avec succès.", 'success')
             return redirect(url_for('client.acheter_jetons'))
     return render_template('client/acheter_jetons.html', form=form)
-
-@client.route('/enchere/<int:enchere_id>', methods=['GET', 'POST'])
-@login_required
-def detail_enchere(enchere_id):
-    enchere = Enchere.query.get_or_404(enchere_id)
-    form = PlacerEnchereForm(enchere_id=enchere_id)
-
-    if form.validate_on_submit():
-        if form.montant.data > enchere.prix_actuel:
-            enchere.prix_actuel = form.montant.data
-            enchere.gagnant_id = current_user.id_utilisateur
-            db.session.commit()
-            flash("Votre enchère a été placée avec succès.", "success")
-        else:
-            flash("Le montant de l'enchère doit être supérieur au prix actuel.", "danger")
-        return redirect(url_for('client.detail_enchere', enchere_id=enchere.id_enchere))
-    
-    now = datetime.utcnow()
-    return render_template('detail_enchere.html', enchere=enchere, form=form, now=now)
 
 @client.route('/placer_enchere/<int:enchere_id>', methods=['POST'])
 @login_required

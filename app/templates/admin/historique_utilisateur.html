@@ -1,27 +1,97 @@
 {% extends 'base.html' %}
 
+{% block title %}Historique de {{ utilisateur.prenom }}{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h1>Historique des mises de {{ utilisateur.prenom }}</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID Enchère</th>
-                <th>Prix proposé</th>
-                <th>Jetons utilisés</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for mise in mises %}
-            <tr>
-                <td>{{ mise.enchere_id }}</td>
-                <td>{{ mise.prix_propose }}</td>
-                <td>{{ mise.jetons_utilises }}</td>
-                <td>{{ mise.date_mise }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container my-5">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">
+            <i class="fas fa-history me-2"></i>
+            Historique des mises de {{ utilisateur.prenom }}
+        </h1>
+        <a href="{{ url_for('admin.gestion_utilisateurs') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Retour
+        </a>
+    </div>
+
+    <!-- Information utilisateur -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>Email :</strong> {{ utilisateur.email }}</p>
+                    <p class="mb-1"><strong>Solde actuel :</strong> {{ utilisateur.solde_jetons }} jetons</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-1"><strong>Membre depuis :</strong> {{ utilisateur.date_inscription.strftime('%d/%m/%Y') }}</p>
+                    <p class="mb-1"><strong>Statut :</strong> 
+                        <span class="badge {% if utilisateur.role == 'admin' %}bg-primary{% else %}bg-secondary{% endif %}">
+                            {{ utilisateur.role | capitalize }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des mises -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID Enchère</th>
+                            <th>Prix proposé</th>
+                            <th>Jetons utilisés</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mise in mises %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('main.detail_enchere', enchere_id=mise.enchere_id) }}" 
+                                   class="text-decoration-none">
+                                    #{{ mise.enchere_id }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ mise.prix_propose }}€
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-coins me-1"></i>
+                                    {{ mise.jetons_utilises }}
+                                </span>
+                            </td>
+                            <td>
+                                <i class="far fa-calendar-alt me-1"></i>
+                                {{ mise.date_mise.strftime('%d/%m/%Y à %H:%M') }}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('main.detail_enchere', enchere_id=mise.enchere_id) }}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>Voir l'enchère
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Aucune mise enregistrée pour cet utilisateur.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

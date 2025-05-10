@@ -1,6 +1,6 @@
+from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user
-from datetime import datetime
 from app import db
 from app.client.forms import PlacerEnchereForm
 from app.models import Enchere, Produit, Mise
@@ -10,25 +10,30 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     """Page d'accueil avec les enchères actives"""
-    encheres_actives = Enchere.query.filter(
+    encheres_actives = Enchere.query.options(
+        db.joinedload(Enchere.produit)
+    ).filter(
         Enchere.date_fin > datetime.utcnow(),
         Enchere.statut == 'ouverte'
     ).order_by(Enchere.date_fin).all()
     
-    return render_template('index.html', encheres=encheres_actives, title='Accueil')
-
-from datetime import datetime
+    return render_template('index.html', 
+                         encheres=encheres_actives, 
+                         title='Accueil')
 
 @main.route('/enchere/<int:enchere_id>', methods=['GET', 'POST'])
 def detail_enchere(enchere_id):
     """Détail d'une enchère spécifique"""
     enchere = Enchere.query.get_or_404(enchere_id)
-    produit = enchere.produit
-
-    # Initialiser le formulaire
     form = PlacerEnchereForm(enchere_id=enchere.id_enchere)
 
-    # Récupérer les mises de l'utilisateur courant pour cette enchère
+    from app.services.enchere_service import verifier_statut_enchere
+    if verifier_statut_enchere(enchere):
+        if enchere.statut == 'terminee' and not enchere.prix_gagnant:
+            success = enchere.determine_gagnant()
+            if success:
+                db.session.refresh(enchere)
+    
     mises_utilisateur = []
     if current_user.is_authenticated:
         mises_utilisateur = Mise.query.filter_by(
@@ -36,58 +41,54 @@ def detail_enchere(enchere_id):
             utilisateur_id=current_user.id_utilisateur
         ).order_by(Mise.date_mise.desc()).all()
 
-    # Passage de l'heure actuelle pour calculer le temps restant dans le template
-    current_time = datetime.utcnow()
-
     return render_template(
         'detail_enchere.html',
         enchere=enchere,
-        produit=produit,
+        produit=enchere.produit,
         mises_utilisateur=mises_utilisateur,
-        form=form,  # Passer le formulaire au template
-        title=f'Enchère - {produit.nom_produit}',
-        current_time=current_time
+        form=form,
+        title=f'Enchère - {enchere.produit.nom_produit}',
+        current_time=datetime.utcnow()
     )
-
-@main.route('/comment-ca-marche')
-def comment_ca_marche():
-    """Page explicative du fonctionnement des enchères"""
-    return render_template('comment_ca_marche.html', title='Comment ça marche')
-
-from flask import request, render_template
-from app.models import Produit
 
 @main.route('/rechercher', methods=['GET'])
 def rechercher_produits():
+    """Recherche de produits par nom"""
     query = request.args.get('q', '').strip()
     produits = []
     if query:
-        produits = Produit.query.filter(Produit.nom_produit.ilike(f"%{query}%")).all()
-    return render_template('main/recherche.html', query=query, produits=produits)
-
-from flask import render_template
-from app.models import Produit
+        produits = Produit.query.filter(
+            Produit.nom_produit.ilike(f"%{query}%")
+        ).all()
+    return render_template('main/recherche.html', 
+                         query=query, 
+                         produits=produits)
 
 @main.route('/produit/<int:produit_id>')
 def detail_produit(produit_id):
+    """Détail d'un produit spécifique"""
     produit = Produit.query.get_or_404(produit_id)
     return render_template('main/detail_produit.html', produit=produit)
 
 @main.route('/categories')
 def categories():
     """Affiche les produits et enchères par catégorie"""
-    # Récupérer toutes les catégories existantes
     categories = db.session.query(Produit.categorie).distinct().all()
-    categories = [cat[0] for cat in categories if cat[0]]  # Extraire les noms des catégories
-
-    # Récupérer la catégorie sélectionnée
+    categories = [cat[0] for cat in categories if cat[0]]
     categorie_selectionnee = request.args.get('categorie')
 
     produits = []
     encheres = []
     if categorie_selectionnee:
-        produits = Produit.query.filter_by(categorie=categorie_selectionnee).all()
-        encheres = Enchere.query.join(Produit).filter(Produit.categorie == categorie_selectionnee).all()
+        produits = Produit.query.filter_by(
+            categorie=categorie_selectionnee
+        ).all()
+        # Use joinedload to eagerly load the produit relationship
+        encheres = Enchere.query.options(
+            db.joinedload(Enchere.produit)
+        ).join(Produit).filter(
+            Produit.categorie == categorie_selectionnee
+        ).all()
 
     return render_template(
         'main/categories.html',
@@ -98,33 +99,47 @@ def categories():
         title='Catégories'
     )
 
+@main.route('/toutes_encheres', methods=['GET'])
+def toutes_encheres():
+    """Affiche toutes les enchères avec possibilité de filtrage"""
+    filter_choice = request.args.get('filter', 'all')
+    now = datetime.utcnow()
+
+    # Base query with eager loading of produit relationship
+    query = Enchere.query.options(db.joinedload(Enchere.produit))
+
+    if filter_choice == "actuelles":
+        encheres = query.filter(
+            Enchere.date_fin >= now,
+            Enchere.statut == 'ouverte'
+        ).order_by(Enchere.date_fin.asc()).all()
+    elif filter_choice == "terminees":
+        encheres = query.filter(
+            Enchere.date_fin < now,
+            Enchere.statut == 'terminee'
+        ).order_by(Enchere.date_fin.desc()).all()
+    else:
+        encheres = query.order_by(Enchere.date_fin.desc()).all()
+
+    return render_template(
+        'toutes_encheres.html',
+        encheres=encheres,
+        filter_choice=filter_choice,
+        title='Toutes les enchères'
+    )
+
+@main.route('/comment-ca-marche')
+def comment_ca_marche():
+    """Page explicative du fonctionnement des enchères"""
+    return render_template('comment_ca_marche.html',
+                         title='Comment ça marche')
+
 @main.route('/a-propos')
 def a_propos():
+    """Page À propos"""
     return render_template('a_propos.html')
 
 @main.route('/faq')
 def faq():
+    """Page FAQ"""
     return render_template('faq.html')
-
-from flask import request, render_template
-from datetime import datetime
-from app.models import Enchere
-
-@main.route('/toutes_encheres', methods=['GET'])
-def toutes_encheres():
-    # Récupère le paramètre 'filter' dans l'URL (par défaut, on affiche toutes les enchères)
-    filter_choice = request.args.get('filter', 'all')
-    now = datetime.utcnow()
-
-    if filter_choice == "actuelles":
-        # Enchères en cours : on considère celles qui ne sont pas terminées (date_fin >= now ou statut ouvert)
-        encheres = Enchere.query.filter(Enchere.date_fin >= now, Enchere.statut == 'ouverte').order_by(Enchere.date_fin.asc()).all()
-    elif filter_choice == "terminees":
-        # Enchères terminées : date_fin < now et statut terminé
-        encheres = Enchere.query.filter(Enchere.date_fin < now, Enchere.statut == 'terminee').order_by(Enchere.date_fin.desc()).all()
-    else:
-        # Toutes les enchères, triées par date de fin (du plus récent au plus ancien par exemple)
-        encheres = Enchere.query.order_by(Enchere.date_fin.desc()).all()
-
-    return render_template('toutes_encheres.html', encheres=encheres, filter_choice=filter_choice)
-
