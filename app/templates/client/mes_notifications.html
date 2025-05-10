@@ -1,30 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-primary mb-4"><i class="fas fa-bell me-2"></i> Mes Notifications</h1>
-    <hr class="mb-4">
-    <ul class="list-group shadow-lg">
-        {% for notification in notifications %}
-        <li class="list-group-item d-flex justify-content-between align-items-center {% if not notification.lue %}bg-warning bg-opacity-25{% endif %}">
-            <div class="d-flex flex-column">
-                <strong>{{ notification.message }}</strong>
-                <small class="text-muted">{{ notification.date_creation.strftime('%d/%m/%Y %H:%M') }}</small>
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-bell me-2"></i>Mes Notifications
+        </h1>
+        <p class="lead mb-0">Restez informé de vos enchères et activités</p>
+    </div>
+</header>
+
+<div class="container my-5">
+    <!-- Notifications List -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-0">
+                    {% if notifications %}
+                        <div class="list-group list-group-flush">
+                            {% for notification in notifications %}
+                                <div class="list-group-item {% if not notification.lue %}bg-light{% endif %} p-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex align-items-center mb-2">
+                                                {% if not notification.lue %}
+                                                    <span class="badge bg-warning me-2"></span>
+                                                {% endif %}
+                                                <h6 class="mb-0 {% if not notification.lue %}fw-bold{% endif %}">
+                                                    {{ notification.message }}
+                                                </h6>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ notification.date_creation.strftime('%d/%m/%Y à %H:%M') }}
+                                            </small>
+                                        </div>
+                                        
+                                        {% if not notification.lue %}
+                                            <form method="POST" action="{{ url_for('client.marquer_lue', notification_id=notification.id_notification) }}" class="ms-3">
+                                                {{ form.csrf_token }}
+                                                <button type="submit" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                                    <i class="fas fa-check me-1"></i>Marquer comme lue
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">Aucune notification pour le moment</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-            {% if not notification.lue %}
-            <form method="POST" action="{{ url_for('client.marquer_lue', notification_id=notification.id_notification) }}">
-                {{ form.csrf_token}}
-                <button type="submit" class="btn btn-sm btn-success rounded-pill">
-                    <i class="fas fa-check me-1"></i> Marquer comme lue
-                </button>
-            </form>
-            {% endif %}
-        </li>
-        {% else %}
-        <li class="list-group-item text-center text-muted">
-            <i class="fas fa-info-circle me-2"></i> Aucune notification pour le moment.
-        </li>
-        {% endfor %}
-    </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

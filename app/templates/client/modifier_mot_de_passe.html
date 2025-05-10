@@ -3,43 +3,74 @@
 {% block title %}Modifier le mot de passe{% endblock %}
 
 {% block content %}
-<header class="bg-primary text-white py-4 shadow-sm">
-    <div class="container text-center">
-        <h1 class="h2 fw-bold">Modifier mon mot de passe</h1>
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">Modifier mon mot de passe</h1>
+        <p class="lead mb-0">Sécurisez votre compte avec un nouveau mot de passe</p>
     </div>
 </header>
 
 <div class="container my-5">
-    <div class="card border-0 shadow-lg p-4 bg-light">
-        <h3 class="text-center text-secondary fw-bold mb-4">
-            <i class="fas fa-key me-2"></i> Changez votre mot de passe
-        </h3>
-        <form method="POST" action="{{ url_for('client.modifier_mot_de_passe') }}">
-            {{ form.hidden_tag() }}
-            
-            <!-- Champ mot de passe actuel -->
-            <div class="mb-4">
-                <label for="mot_de_passe_actuel" class="form-label fw-bold">Mot de passe actuel</label>
-                {{ form.mot_de_passe_actuel(class="form-control shadow-sm", placeholder="Entrez votre mot de passe actuel") }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <!-- Champ nouveau mot de passe -->
-            <div class="mb-4">
-                <label for="nouveau_mot_de_passe" class="form-label fw-bold">Nouveau mot de passe</label>
-                {{ form.nouveau_mot_de_passe(class="form-control shadow-sm", placeholder="Créez un nouveau mot de passe") }}
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="h4 text-primary mb-0 text-center">
+                        <i class="fas fa-shield-alt me-2"></i>Changement de mot de passe
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('client.modifier_mot_de_passe') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Mot de passe actuel -->
+                        <div class="form-floating mb-4">
+                            {{ form.mot_de_passe_actuel(class="form-control", placeholder="Mot de passe actuel") }}
+                            <label for="mot_de_passe_actuel">Mot de passe actuel</label>
+                        </div>
+                        
+                        <!-- Nouveau mot de passe -->
+                        <div class="form-floating mb-4">
+                            {{ form.nouveau_mot_de_passe(class="form-control", placeholder="Nouveau mot de passe") }}
+                            <label for="nouveau_mot_de_passe">Nouveau mot de passe</label>
+                        </div>
+                        
+                        <!-- Confirmer mot de passe -->
+                        <div class="form-floating mb-4">
+                            {{ form.confirmer_mot_de_passe(class="form-control", placeholder="Confirmer le mot de passe") }}
+                            <label for="confirmer_mot_de_passe">Confirmer le mot de passe</label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 py-3" 
+                                style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                            <i class="fas fa-key me-2"></i>Mettre à jour le mot de passe
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Section -->
+                <div class="card-footer bg-light border-0 p-4">
+                    <div class="d-flex align-items-center text-muted">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Pour votre sécurité, choisissez un mot de passe fort et unique</small>
+                    </div>
+                </div>
             </div>
-            
-            <!-- Champ confirmer mot de passe -->
-            <div class="mb-4">
-                <label for="confirmer_mot_de_passe" class="form-label fw-bold">Confirmer le nouveau mot de passe</label>
-                {{ form.confirmer_mot_de_passe(class="form-control shadow-sm", placeholder="Confirmez votre nouveau mot de passe") }}
-            </div>
-            
-            <!-- Bouton Mettre à jour -->
-            <button type="submit" class="btn btn-success w-100 py-3 shadow-sm">
-                <i class="fas fa-save me-2"></i> Mettre à jour
-            </button>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

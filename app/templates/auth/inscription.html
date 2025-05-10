@@ -3,145 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription</title>
+    <title>Inscription - AuctionTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
-        }
-        .form-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h1 {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #333333;
-        }
-        .form-label {
-            font-weight: bold;
-            color: #555555;
-        }
-        .form-control {
-            font-size: 1.1rem;
-            padding: 12px 15px;
-            border: 1px solid #dddddd;
-            border-radius: 5px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s ease;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-        .btn {
-            background-color: #007bff;
-            color: #ffffff;
-            font-size: 1.2rem;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #218838;
-        }
-        .link {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.95rem;
-        }
-        .link a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .link a:hover {
-            text-decoration: underline;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .form-container {
-            margin-right: auto;
-            margin-left: auto;
-            padding-right: 4rem; /* Ajout d'un espace à droite */
-        }
-    </style>
 </head>
-<body>
-    <div class="form-container">
-        <h1>Inscription</h1>
 
-        <!-- Messages Flash -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="alert-container mb-4">
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                <i class="fas fa-info-circle"></i> {{ message }}
-            </div>
-            {% endfor %}
+<body class="bg-light">
+    <!-- Header Section -->
+    <header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+        <div class="container text-center text-white">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-user-plus me-2"></i>Inscription
+            </h1>
+            <p class="lead mb-0">Rejoignez la communauté AuctionTech</p>
         </div>
-        {% endif %}
-        {% endwith %}
+    </header>
 
-        <form method="POST" action="{{ url_for('auth.inscription') }}">
-            {{ form.hidden_tag() }}
-            
-            <!-- Champs du formulaire -->
-            <label for="nom" class="form-label">Nom</label>
-            {{ form.nom(class="form-control", placeholder="Entrez votre nom") }}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <!-- Messages Flash -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} d-flex align-items-center mb-4" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>{{ message }}</div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
 
-            <label for="prenom" class="form-label">Prénom</label>
-            {{ form.prenom(class="form-control", placeholder="Entrez votre prénom") }}
+                        <!-- Formulaire d'inscription -->
+                        <form method="POST" action="{{ url_for('auth.inscription') }}" class="needs-validation" novalidate>
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="row g-4">
+                                <!-- Informations personnelles -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.nom(class="form-control", placeholder="Nom") }}
+                                        <label><i class="fas fa-user me-2"></i>Nom</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.prenom(class="form-control", placeholder="Prénom") }}
+                                        <label><i class="fas fa-user me-2"></i>Prénom</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        {{ form.email(class="form-control", placeholder="Email") }}
+                                        <label><i class="fas fa-envelope me-2"></i>Email</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mot de passe -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.mot_de_passe(class="form-control", placeholder="Mot de passe") }}
+                                        <label><i class="fas fa-lock me-2"></i>Mot de passe</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.confirmation_mot_de_passe(class="form-control", placeholder="Confirmation") }}
+                                        <label><i class="fas fa-lock me-2"></i>Confirmation</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Adresse -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        {{ form.adresse(class="form-control", placeholder="Adresse") }}
+                                        <label><i class="fas fa-home me-2"></i>Adresse</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Code postal et Ville -->
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        {{ form.code_postal(class="form-control", placeholder="Code postal") }}
+                                        <label><i class="fas fa-map-marker-alt me-2"></i>Code postal</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-floating">
+                                        {{ form.ville(class="form-control", placeholder="Ville") }}
+                                        <label><i class="fas fa-city me-2"></i>Ville</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Pays et Téléphone -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.pays(class="form-control", placeholder="Pays") }}
+                                        <label><i class="fas fa-globe me-2"></i>Pays</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.telephone(class="form-control", placeholder="Téléphone") }}
+                                        <label><i class="fas fa-phone me-2"></i>Téléphone</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bouton d'inscription -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary w-100 py-3" 
+                                            style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                                        <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
 
-            <label for="email" class="form-label">Email</label>
-            {{ form.email(class="form-control", placeholder="Entrez votre email") }}
-
-            <label for="mot_de_passe" class="form-label">Mot de passe</label>
-            {{ form.mot_de_passe(class="form-control", placeholder="Créez un mot de passe") }}
-
-            <label for="confirmation_mot_de_passe" class="form-label">Confirmez le mot de passe</label>
-            {{ form.confirmation_mot_de_passe(class="form-control", placeholder="Confirmez votre mot de passe") }}
-
-            <label for="adresse" class="form-label">Adresse</label>
-            {{ form.adresse(class="form-control", placeholder="Entrez votre adresse") }}
-
-            <label for="code_postal" class="form-label">Code postal</label>
-            {{ form.code_postal(class="form-control", placeholder="Entrez votre code postal") }}
-
-            <label for="ville" class="form-label">Ville</label>
-            {{ form.ville(class="form-control", placeholder="Entrez votre ville") }}
-
-            <label for="pays" class="form-label">Pays</label>
-            {{ form.pays(class="form-control", placeholder="Entrez votre pays") }}
-
-            <label for="telephone" class="form-label">Téléphone</label>
-            {{ form.telephone(class="form-control", placeholder="Entrez votre téléphone") }}
-
-            <!-- Bouton d'inscription -->
-            <button type="submit" class="btn">
-                <i class="fas fa-user-plus me-2"></i> S'inscrire
-            </button>
-        </form>
-
-        <!-- Lien pour connexion -->
-        <div class="link">
-            Déjà inscrit ? <a href="{{ url_for('auth.connexion') }}">Se connecter</a>
+                        <!-- Lien de connexion -->
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                Déjà inscrit ? 
+                                <a href="{{ url_for('auth.connexion') }}" class="text-primary text-decoration-none">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Se connecter
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

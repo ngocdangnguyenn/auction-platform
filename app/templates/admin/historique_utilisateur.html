@@ -5,28 +5,38 @@
 {% block content %}
 <div class="container my-5">
     <!-- En-tête -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">
-            <i class="fas fa-history me-2"></i>
-            Historique des mises de {{ utilisateur.prenom }}
-        </h1>
-        <a href="{{ url_for('admin.gestion_utilisateurs') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Retour
-        </a>
-    </div>
+    <header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+        <div class="container text-center text-white">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-history me-2"></i>Historique Utilisateur
+            </h1>
+            <p class="lead mb-0">{{ utilisateur.prenom }} {{ utilisateur.nom }}</p>
+        </div>
+    </header>
 
     <!-- Information utilisateur -->
-    <div class="card mb-4 shadow-sm">
+    <div class="card border-0 shadow-lg mb-4">
+        <div class="card-header bg-white border-0 py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h4 text-primary mb-0">
+                    <i class="fas fa-user me-2"></i>Informations du compte
+                </h2>
+                <a href="{{ url_for('admin.gestion_utilisateurs') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour
+                </a>
+            </div>
+        </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-1"><strong>Email :</strong> {{ utilisateur.email }}</p>
-                    <p class="mb-1"><strong>Solde actuel :</strong> {{ utilisateur.solde_jetons }} jetons</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2 text-muted"></i><strong>Email :</strong> {{ utilisateur.email }}</p>
+                    <p class="mb-2"><i class="fas fa-coins me-2 text-warning"></i><strong>Solde actuel :</strong> {{ utilisateur.solde_jetons }} jetons</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-1"><strong>Membre depuis :</strong> {{ utilisateur.date_inscription.strftime('%d/%m/%Y') }}</p>
-                    <p class="mb-1"><strong>Statut :</strong> 
-                        <span class="badge {% if utilisateur.role == 'admin' %}bg-primary{% else %}bg-secondary{% endif %}">
+                    <p class="mb-2">
+                        <strong>Statut :</strong> 
+                        <span class="badge px-3 py-2 {% if utilisateur.role == 'admin' %}bg-primary{% else %}bg-secondary{% endif %}">
+                            <i class="fas {% if utilisateur.role == 'admin' %}fa-crown{% else %}fa-user{% endif %} me-1"></i>
                             {{ utilisateur.role | capitalize }}
                         </span>
                     </p>
@@ -44,7 +54,6 @@
                         <tr>
                             <th>ID Enchère</th>
                             <th>Prix proposé</th>
-                            <th>Jetons utilisés</th>
                             <th>Date</th>
                             <th>Actions</th>
                         </tr>
@@ -61,12 +70,6 @@
                             <td>
                                 <span class="badge bg-success">
                                     {{ mise.prix_propose }}€
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge bg-warning text-dark">
-                                    <i class="fas fa-coins me-1"></i>
-                                    {{ mise.jetons_utilises }}
                                 </span>
                             </td>
                             <td>

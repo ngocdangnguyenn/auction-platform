@@ -3,59 +3,87 @@
 {% block title %}Enchères{% endblock %}
 
 {% block content %}
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">Bienvenue sur AuctionTech</h1>
+        <p class="lead mb-0">Proposez le prix unique le plus bas et remportez des produits high-tech à prix mini !</p>
+    </div>
+</header>
 <div class="container my-5">
-    <section class="jumbotron bg-light p-5 rounded shadow-sm text-center">
-        <h1 class="display-4 text-primary fw-bold">Bienvenue sur AuctionTech</h1>
-        <p class="lead text-secondary">Proposez le prix unique le plus bas et remportez des produits high-tech à prix mini !</p>
-    </section>
-    <!-- Titre principal -->
-    <h2 class="text-center text-primary fw-bold mb-4">Enchères récentes</h1>
+    <!-- Section des enchères récentes -->
+    <div class="mb-5">
+        <h2 class="text-center text-primary fw-bold mb-4">
+            <i class="fas fa-gavel me-2"></i>Enchères récentes
+        </h2>
 
-    <!-- Carrousel des enchères -->
-    <div class="position-relative">
-        <div id="caroussel-container" class="overflow-hidden">
-            <div id="caroussel" class="d-flex">
-                {% for enchere in encheres[:4] %}
-                <div class="caroussel-item card m-3 shadow-sm" style="width: 300px; flex-shrink: 0;">
-                    <div>
-                        {% if enchere.produit.photo_url %}
-                        <img src="{{ enchere.produit.photo_url }}" alt="{{ enchere.produit.nom_produit }}" class="card-img-top rounded-top" style="height: 200px; object-fit: cover;">
-                        {% else %}
-                        <img src="{{ url_for('static', filename='images/default-product.png') }}" alt="Image par défaut" class="card-img-top rounded-top" style="height: 200px; object-fit: cover;">
-                        {% endif %}
+        <!-- Carrousel amélioré -->
+        <div class="position-relative">
+            <div class="overflow-hidden" id="caroussel-container">
+                <div class="d-flex transition-transform" id="caroussel">
+                    {% for enchere in encheres[:4] %}
+                    <div class="card border-0 shadow-sm mx-3" style="width: 300px; flex: 0 0 auto;">
+                        <div class="position-relative">
+                            <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
+                                 alt="{{ enchere.produit.nom_produit }}" 
+                                 class="card-img-top"
+                                 style="height: 200px; object-fit: cover;">
+                            <span class="badge bg-primary position-absolute top-0 end-0 m-2">
+                                <i class="fas fa-coins me-1"></i>{{ enchere.jetons_requis }}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">{{ enchere.produit.nom_produit }}</h5>
+                            <p class="card-text text-muted small">
+                                {{ enchere.produit.description[:50] }}{% if enchere.produit.description|length > 50 %}...{% endif %}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}
+                                </span>
+                            </div>
+                            <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" 
+                               class="btn btn-outline-primary w-100">
+                                <i class="fas fa-gavel me-2"></i>Voir l'enchère
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-primary">{{ enchere.produit.nom_produit }}</h5>
-                        <p class="card-text text-muted">{{ enchere.produit.description[:50] }}{% if enchere.produit.description|length > 50 %}...{% endif %}</p>
-                        <p class="text-secondary"><i class="fas fa-calendar-alt me-2"></i> Fin : {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
-                        <p class="text-secondary"><i class="fas fa-coins me-2"></i> Jetons requis : {{ enchere.jetons_requis }}</p>
-                        <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-outline-primary">Voir l'enchère</a>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+
+            <!-- Navigation buttons -->
+            <button class="btn btn-primary rounded-circle position-absolute start-0 top-50 translate-middle-y opacity-75 d-flex align-items-center justify-content-center" 
+                    style="width: 40px; height: 40px;" 
+                    id="prev-btn" 
+                    disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="btn btn-primary rounded-circle position-absolute end-0 top-50 translate-middle-y opacity-75 d-flex align-items-center justify-content-center" 
+                    style="width: 40px; height: 40px;" 
+                    id="next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
-        <!-- Boutons de navigation -->
-        <button id="prev-btn" class="caroussel-btn position-absolute start-0 top-50 translate-middle-y" disabled>
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <button id="next-btn" class="caroussel-btn position-absolute end-0 top-50 translate-middle-y">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
 
-    <!-- Indicateurs de page -->
-    <div class="d-flex justify-content-center my-3">
-        {% for i in range(4) %}
-        <span class="pagination-dot {% if i == 0 %}active{% endif %}" data-index="{{ i }}"></span>
-        {% endfor %}
-    </div>
+        <!-- Pagination dots -->
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            {% for i in range(4) %}
+            <button class="btn btn-primary rounded-circle p-0 {% if i == 0 %}opacity-100{% else %}opacity-50{% endif %}" 
+                    style="width: 10px; height: 10px;" 
+                    data-index="{{ i }}">
+            </button>
+            {% endfor %}
+        </div>
 
-    <!-- Lien vers toutes les enchères -->
-    <div class="text-center mt-4">
-        <a href="{{ url_for('main.toutes_encheres') }}" class="btn btn-primary">
-            <i class="fas fa-list me-2"></i> Voir toutes les enchères
-        </a>
+        <!-- Call to action -->
+        <div class="text-center mt-5">
+            <a href="{{ url_for('main.toutes_encheres') }}" 
+               class="btn btn-lg btn-primary"
+               style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                <i class="fas fa-list me-2"></i>Voir toutes les enchères
+            </a>
+        </div>
     </div>
 </div>
 

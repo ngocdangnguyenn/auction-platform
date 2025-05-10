@@ -3,89 +3,143 @@
 {% block title %}Gestion des Produits{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-box-open me-2"></i>Gestion des Produits
+        </h1>
+        <p class="lead mb-0">Gérez votre catalogue de produits</p>
+    </div>
+</header>
+
 <div class="container my-5">
-    <!-- Table des Produits -->
-    <section>
-        <h3 class="text-secondary fw-bold mb-3">Liste des Produits</h3>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Description</th>
-                        <th>Prix (€)</th>
-                        <th>Catégorie</th>
-                        <th>Photo</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for produit in produits %}
-                    <tr>
-                        <td class="text-center">{{ produit.id_produit }}</td>
-                        <td>{{ produit.nom_produit }}</td>
-                        <td class="text-muted">{{ produit.description }}</td>
-                        <td class="text-center">{{ produit.prix_produit }}</td>
-                        <td class="text-center">{{ produit.categorie }}</td>
-                        <td class="text-center">
-                            {% if produit.photo_url %}
-                                <img src="{{ produit.photo_url }}" alt="Photo du produit" class="rounded shadow-sm" style="width: 80px; height: auto;">
-                            {% else %}
-                                <span class="text-danger">Aucune photo</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}" class="btn btn-sm btn-outline-warning me-2">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                            <a href="#" class="btn btn-sm btn-outline-danger" onclick="event.preventDefault(); if(confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) { document.getElementById('delete-form-{{ produit.id_produit }}').submit(); }">
-                                <i class="fas fa-trash"></i> Supprimer
-                            </a>
-                            <form id="delete-form-{{ produit.id_produit }}" action="{{ url_for('admin.supprimer_produit', produit_id=produit.id_produit) }}" method="POST" style="display: none;">
-                                {{ form.csrf_token }}
-                            </form>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">Aucun produit disponible.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Products Table Section -->
+    <section class="card border-0 shadow-lg">
+        <div class="card-header bg-white border-0 py-4">
+            <h3 class="card-title text-primary mb-0">
+                <i class="fas fa-list me-2"></i>Liste des Produits
+            </h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+                        <tr class="text-white">
+                            <th class="py-3 px-4">ID</th>
+                            <th class="py-3">Nom</th>
+                            <th class="py-3">Description</th>
+                            <th class="py-3 text-center">Prix (€)</th>
+                            <th class="py-3 text-center">Catégorie</th>
+                            <th class="py-3 text-center">Photo</th>
+                            <th class="py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in produits %}
+                        <tr>
+                            <td class="px-4 fw-bold text-primary">{{ produit.id_produit }}</td>
+                            <td class="fw-medium">{{ produit.nom_produit }}</td>
+                            <td class="text-muted small">{{ produit.description }}</td>
+                            <td class="text-center fw-bold">{{ produit.prix_produit }} €</td>
+                            <td class="text-center">
+                                <span class="badge bg-info px-3 py-2">{{ produit.categorie }}</span>
+                            </td>
+                            <td class="text-center">
+                                {% if produit.photo_url %}
+                                    <img src="{{ produit.photo_url }}" alt="Photo" class="rounded shadow-sm" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% else %}
+                                    <span class="badge bg-danger px-3 py-2">
+                                        <i class="fas fa-image me-1"></i>Aucune photo
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}" 
+                                       class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="if(confirm('Confirmer la suppression ?')) document.getElementById('delete-form-{{ produit.id_produit }}').submit();" 
+                                            class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <form id="delete-form-{{ produit.id_produit }}" 
+                                      action="{{ url_for('admin.supprimer_produit', produit_id=produit.id_produit) }}" 
+                                      method="POST" class="d-none">
+                                    {{ form.csrf_token }}
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">Aucun produit disponible</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
-    <!-- Formulaire d'ajout de produit -->
-    <section class="mt-5">
-        <h3 class="text-secondary fw-bold mb-3">Ajouter un Nouveau Produit</h3>
-        <form method="POST" action="{{ url_for('admin.gestion_produits') }}" class="p-4 border rounded shadow-sm bg-light">
-            {{ form.hidden_tag() }}
-            <div class="mb-3">
-                <label for="nom" class="form-label">Nom du Produit</label>
-                {{ form.nom_produit(class="form-control shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                {{ form.description(class="form-control shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="prix" class="form-label">Prix (€)</label>
-                {{ form.prix_produit(class="form-control shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="categorie" class="form-label">Catégorie</label>
-                {{ form.categorie(class="form-select shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="photo_url" class="form-label">URL de la photo</label>
-                {{ form.photo_url(class="form-control shadow-sm") }}
-            </div>
-            <button type="submit" class="btn btn-success w-100 py-2">
-                <i class="fas fa-plus-circle me-2"></i> Ajouter le Produit
-            </button>
-        </form>
+    <!-- Add Product Form Section -->
+    <section class="card border-0 shadow-lg mt-5">
+        <div class="card-header bg-white border-0 py-4">
+            <h3 class="card-title text-primary mb-0">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter un Nouveau Produit
+            </h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" action="{{ url_for('admin.gestion_produits') }}" class="row g-3">
+                {{ form.hidden_tag() }}
+                
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ form.nom_produit(class="form-control", placeholder="Nom du produit") }}
+                        <label>Nom du Produit</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ form.prix_produit(class="form-control", placeholder="Prix") }}
+                        <label>Prix (€)</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="form-floating mb-3">
+                        {{ form.description(class="form-control", placeholder="Description", style="height: 100px") }}
+                        <label>Description</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ form.categorie(class="form-select", placeholder="Catégorie") }}
+                        <label>Catégorie</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ form.photo_url(class="form-control", placeholder="URL de la photo") }}
+                        <label>URL de la photo</label>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success w-100 py-3" 
+                            style="background: linear-gradient(90deg, #28a745 0%, #218838 100%)">
+                        <i class="fas fa-plus-circle me-2"></i>Ajouter le Produit
+                    </button>
+                </div>
+            </form>
+        </div>
     </section>
 </div>
 {% endblock %}

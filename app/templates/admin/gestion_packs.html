@@ -3,72 +3,139 @@
 {% block title %}Gestion des Packs de Jetons{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-coins me-2"></i>Gestion des Packs
+        </h1>
+        <p class="lead mb-0">Gérez les packs de jetons disponibles à la vente</p>
+    </div>
+</header>
+
 <div class="container my-5">
-
-    <!-- Table des Packs de Jetons -->
-    <section>
-        <h3 class="text-secondary fw-bold mb-3">Liste des Packs</h3>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Nombre de Jetons</th>
-                        <th>Prix (€)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for pack in packs %}
-                    <tr>
-                        <td class="text-center">{{ pack.id_pack }}</td>
-                        <td>{{ pack.nom_pack }}</td>
-                        <td class="text-center">{{ pack.nombre_jetons }}</td>
-                        <td class="text-center">{{ pack.prix_pack }}</td>
-                        <td class="text-center">
-                            <a href="{{ url_for('admin.modifier_pack', pack_id=pack.id_pack) }}" class="btn btn-sm btn-outline-warning me-2">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                            <form action="{{ url_for('admin.supprimer_pack', pack_id=pack.id_pack) }}" method="POST" style="display: inline;">
-                                {{ form.csrf_token }}
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">Aucun pack disponible.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Pack List Section -->
+    <div class="card border-0 shadow-lg mb-5">
+        <div class="card-header bg-white border-0 py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h4 text-primary mb-0">
+                    <i class="fas fa-list me-2"></i>Liste des Packs
+                </h2>
+                <span class="badge bg-primary rounded-pill px-3 py-2">
+                    Total: {{ packs|length }}
+                </span>
+            </div>
         </div>
-    </section>
+        
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+                        <tr class="text-white">
+                            <th class="py-3 px-4">ID</th>
+                            <th class="py-3">Nom du Pack</th>
+                            <th class="py-3 text-center">Jetons</th>
+                            <th class="py-3 text-center">Prix (€)</th>
+                            <th class="py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pack in packs %}
+                        <tr>
+                            <td class="px-4 fw-bold text-primary">{{ pack.id_pack }}</td>
+                            <td class="fw-medium">{{ pack.nom_pack }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-info px-3 py-2">
+                                    <i class="fas fa-coins me-1"></i>{{ pack.nombre_jetons }}
+                                </span>
+                            </td>
+                            <td class="text-center fw-bold">{{ pack.prix_pack }} €</td>
+                            <td class="text-center py-3">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin.modifier_pack', pack_id=pack.id_pack) }}" 
+                                       class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce pack ?')) document.getElementById('delete-form-{{ pack.id_pack }}').submit();" 
+                                            class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="tooltip" 
+                                            title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <form id="delete-form-{{ pack.id_pack }}" 
+                                      action="{{ url_for('admin.supprimer_pack', pack_id=pack.id_pack) }}" 
+                                      method="POST" 
+                                      class="d-none">
+                                    {{ form.csrf_token }}
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">Aucun pack disponible</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <!-- Formulaire d'ajout de pack -->
-    <section class="mt-5">
-        <h3 class="text-secondary fw-bold mb-3">Ajouter un Nouveau Pack</h3>
-        <form method="POST" action="{{ url_for('admin.gestion_packs') }}" class="p-4 border rounded shadow-sm bg-light">
-            {{ form.hidden_tag() }}
-            <div class="mb-3">
-                <label for="nom" class="form-label">Nom du Pack</label>
-                {{ form.nom_pack(class="form-control shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="nombre_jetons" class="form-label">Nombre de Jetons</label>
-                {{ form.nombre_jetons(class="form-control shadow-sm") }}
-            </div>
-            <div class="mb-3">
-                <label for="prix" class="form-label">Prix (€)</label>
-                {{ form.prix_pack(class="form-control shadow-sm") }}
-            </div>
-            <button type="submit" class="btn btn-success w-100 py-2">
-                <i class="fas fa-plus-circle me-2"></i> Ajouter le Pack
-            </button>
-        </form>
-    </section>
+    <!-- Add Pack Form Section -->
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-white border-0 py-4">
+            <h2 class="h4 text-primary mb-0">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter un Pack
+            </h2>
+        </div>
+        
+        <div class="card-body p-4">
+            <form method="POST" action="{{ url_for('admin.gestion_packs') }}" class="row g-3">
+                {{ form.hidden_tag() }}
+                
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        {{ form.nom_pack(class="form-control", placeholder="Nom du pack") }}
+                        <label>Nom du Pack</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        {{ form.nombre_jetons(class="form-control", placeholder="Nombre de jetons") }}
+                        <label>Nombre de Jetons</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        {{ form.prix_pack(class="form-control", placeholder="Prix") }}
+                        <label>Prix (€)</label>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success w-100 py-3" 
+                            style="background: linear-gradient(90deg, #28a745 0%, #218838 100%)">
+                        <i class="fas fa-plus-circle me-2"></i>Ajouter le Pack
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<!-- Initialize tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+})
+</script>
 {% endblock %}

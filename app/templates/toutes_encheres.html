@@ -3,47 +3,94 @@
 {% block title %}Toutes les Enchères{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-gavel me-2"></i>Toutes les Enchères
+        </h1>
+        <p class="lead mb-0">Découvrez toutes nos enchères en cours et à venir</p>
+    </div>
+</header>
+
 <div class="container my-5">
-    <h1 class="text-center text-primary fw-bold mb-4">Toutes les Enchères</h1>
-    
-    <!-- Bloc de filtres -->
-    <div class="mb-4 text-center">
-        <div class="btn-group" role="group" aria-label="Filtrer les enchères">
-            <a href="{{ url_for('main.toutes_encheres', filter='all') }}" class="btn btn-outline-primary {% if filter_choice == 'all' %}active{% endif %}">
-                Toutes
-            </a>
-            <a href="{{ url_for('main.toutes_encheres', filter='actuelles') }}" class="btn btn-outline-primary {% if filter_choice == 'actuelles' %}active{% endif %}">
-                En cours
-            </a>
-            <a href="{{ url_for('main.toutes_encheres', filter='terminees') }}" class="btn btn-outline-primary {% if filter_choice == 'terminees' %}active{% endif %}">
-                Terminées
-            </a>
+    <!-- Filtres et Stats -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group" aria-label="Filtrer les enchères">
+                        <a href="{{ url_for('main.toutes_encheres', filter='all') }}" 
+                           class="btn btn-outline-primary {% if filter_choice == 'all' %}active{% endif %}">
+                            <i class="fas fa-list me-1"></i>Toutes
+                        </a>
+                        <a href="{{ url_for('main.toutes_encheres', filter='actuelles') }}" 
+                           class="btn btn-outline-primary {% if filter_choice == 'actuelles' %}active{% endif %}">
+                            <i class="fas fa-clock me-1"></i>En cours
+                        </a>
+                        <a href="{{ url_for('main.toutes_encheres', filter='terminees') }}" 
+                           class="btn btn-outline-primary {% if filter_choice == 'terminees' %}active{% endif %}">
+                            <i class="fas fa-check-circle me-1"></i>Terminées
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                        <i class="fas fa-gavel me-1"></i>{{ encheres|length }} enchère(s)
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Liste des enchères -->
     {% if encheres %}
     <div class="row g-4">
         {% for enchere in encheres %}
         <div class="col-md-4">
-            <div class="card shadow-sm border-0">
-                {% if enchere.produit.photo_url %}
-                <img src="{{ enchere.produit.photo_url }}" alt="{{ enchere.produit.nom_produit }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                {% else %}
-                <img src="{{ url_for('static', filename='images/default-product.png') }}" alt="Image par défaut" class="card-img-top" style="height: 200px; object-fit: cover;">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ enchere.produit.nom_produit }}</h5>
-                    <p class="text-muted">{{ enchere.produit.description[:100] }}{% if enchere.produit.description|length > 100 %}...{% endif %}</p>
-                    <p class="text-secondary">Fin : {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}</p>
-                    <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-primary">Voir l'enchère</a>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
+                         alt="{{ enchere.produit.nom_produit }}" 
+                         class="card-img-top" 
+                         style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-warning text-dark px-3 py-2">
+                            <i class="fas fa-coins me-1"></i>{{ enchere.jetons_requis }} jetons
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary fw-bold mb-3">{{ enchere.produit.nom_produit }}</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ enchere.produit.description[:100] }}{% if enchere.produit.description|length > 100 %}...{% endif %}
+                    </p>
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-{{ 'success' if enchere.statut == 'ouverte' else 'secondary' }} px-3 py-2">
+                                <i class="fas fa-{{ 'clock' if enchere.statut == 'ouverte' else 'check-circle' }} me-1"></i>
+                                {{ enchere.statut|capitalize }}
+                            </span>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                {{ enchere.date_fin.strftime('%d/%m/%Y à %H:%M') }}
+                            </small>
+                        </div>
+                        <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" 
+                           class="btn btn-primary w-100" 
+                           style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                            <i class="fas fa-gavel me-2"></i>Voir l'enchère
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="alert alert-danger text-center">
-        <i class="fas fa-exclamation-circle me-2"></i> Aucune enchère disponible.
+    <div class="text-center py-5">
+        <i class="fas fa-gavel fa-3x text-muted mb-3"></i>
+        <p class="text-muted mb-0">Aucune enchère disponible pour le moment.</p>
     </div>
     {% endif %}
 </div>

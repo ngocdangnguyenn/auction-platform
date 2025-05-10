@@ -3,57 +3,118 @@
 {% block title %}Catégories{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Titre principal -->
-    <h1 class="text-center text-uppercase fw-bold mb-4 text-primary">Catégorie : {{ categorie_selectionnee }}</h1>
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">{{ categorie_selectionnee }}</h1>
+        <p class="lead mb-0">Découvrez nos produits dans cette catégorie</p>
+    </div>
+</header>
 
+<div class="container my-5">
     <!-- Section des Produits -->
-    <section>
-        <h2 class="text-secondary fw-bold mb-3">Produits disponibles</h2>
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 text-primary fw-bold mb-0">
+                <i class="fas fa-box-open me-2"></i>Produits disponibles
+            </h2>
+            <span class="badge bg-primary rounded-pill px-3 py-2">
+                {{ produits|length }} produit(s)
+            </span>
+        </div>
+
         {% if produits %}
-        <div class="row gy-4">
+        <div class="row g-4">
             {% for produit in produits %}
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 h-100">
-                    <img src="{{ produit.photo_url or url_for('static', filename='images/default-product.png') }}" class="card-img-top rounded-top" alt="{{ produit.nom_produit }}" style="height: 200px; object-fit: cover;">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative">
+                        <img src="{{ produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
+                             class="card-img-top" 
+                             alt="{{ produit.nom_produit }}" 
+                             style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-primary px-3 py-2">{{ produit.categorie }}</span>
+                        </div>
+                    </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-primary fw-bold">{{ produit.nom_produit }}</h5>
-                        <p class="card-text text-muted">{{ produit.description[:100] }}{% if produit.description|length > 100 %}...{% endif %}</p>
-                        <a href="{{ url_for('main.detail_produit', produit_id=produit.id_produit) }}" class="btn btn-outline-primary mt-auto">Voir le produit</a>
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ produit.description[:100] }}{% if produit.description|length > 100 %}...{% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fw-bold text-success">{{ produit.prix_produit }} €</span>
+                            <a href="{{ url_for('main.detail_produit', produit_id=produit.id_produit) }}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Voir le produit
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-danger">Aucun produit trouvé pour cette catégorie.</p>
+        <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <p class="text-muted mb-0">Aucun produit trouvé dans cette catégorie.</p>
+        </div>
         {% endif %}
     </section>
 
     <!-- Section des Enchères -->
-    <section class="mt-5">
-        <h2 class="text-secondary fw-bold mb-3">Enchères en cours</h2>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 text-primary fw-bold mb-0">
+                <i class="fas fa-gavel me-2"></i>Enchères en cours
+            </h2>
+            <span class="badge bg-primary rounded-pill px-3 py-2">
+                {{ encheres|length }} enchère(s)
+            </span>
+        </div>
+
         {% if encheres %}
-        <div class="row gy-4">
+        <div class="row g-4">
             {% for enchere in encheres %}
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 h-100">
-                    <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" class="card-img-top rounded-top" alt="{{ enchere.produit.nom_produit }}" style="height: 200px; object-fit: cover;">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative">
+                        <img src="{{ enchere.produit.photo_url or url_for('static', filename='images/default-product.png') }}" 
+                             class="card-img-top" 
+                             alt="{{ enchere.produit.nom_produit }}" 
+                             style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-warning text-dark px-3 py-2">
+                                <i class="fas fa-coins me-1"></i>{{ enchere.jetons_requis }}
+                            </span>
+                        </div>
+                    </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-primary fw-bold">{{ enchere.produit.nom_produit }}</h5>
-                        <ul class="list-unstyled">
-                            <li><strong>Prix actuel :</strong> {{ enchere.produit.prix_produit }} €</li>
-                            <li><strong>Jetons requis :</strong> {{ enchere.jetons_requis }}</li>
-                            <li><strong>Date de fin :</strong> {{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}</li>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2">
+                                <i class="fas fa-tag me-2 text-muted"></i>
+                                <strong>Prix actuel :</strong> {{ enchere.produit.prix_produit }} €
+                            </li>
+                            <li>
+                                <i class="fas fa-clock me-2 text-muted"></i>
+                                <strong>Fin :</strong> {{ enchere.date_fin.strftime('%d/%m/%Y %H:%M') }}
+                            </li>
                         </ul>
-                        <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" class="btn btn-outline-primary mt-auto">Voir l'enchère</a>
+                        <a href="{{ url_for('main.detail_enchere', enchere_id=enchere.id_enchere) }}" 
+                           class="btn btn-outline-primary mt-auto">
+                            <i class="fas fa-gavel me-1"></i>Voir l'enchère
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-danger">Aucune enchère trouvée pour cette catégorie.</p>
+        <div class="text-center py-5">
+            <i class="fas fa-gavel fa-3x text-muted mb-3"></i>
+            <p class="text-muted mb-0">Aucune enchère en cours dans cette catégorie.</p>
+        </div>
         {% endif %}
     </section>
 </div>

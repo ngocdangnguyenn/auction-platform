@@ -1,32 +1,93 @@
 {% extends "base.html" %}
 
+{% block title %}Modifier le Produit{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Modifier le produit : {{ produit.nom_produit }}</h2>
-    <form method="POST" action="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}">
-        {{ form.hidden_tag() }}
-        <div class="mb-3">
-            {{ form.nom_produit.label }}
-            {{ form.nom_produit(class="form-control") }}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-edit me-2"></i>Modifier le Produit
+        </h1>
+        <p class="lead mb-0">{{ produit.nom_produit }}</p>
+    </div>
+</header>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 py-4">
+                    <h2 class="h4 text-primary mb-0">
+                        <i class="fas fa-box-open me-2"></i>Informations du Produit
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.modifier_produit', produit_id=produit.id_produit) }}" class="row g-3">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.nom_produit(class="form-control", placeholder="Nom du produit") }}
+                                <label>Nom du produit</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.description(class="form-control", style="height: 100px", placeholder="Description") }}
+                                <label>Description</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.prix_produit(class="form-control", placeholder="Prix") }}
+                                <label>Prix (€)</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.categorie(class="form-select", placeholder="Catégorie") }}
+                                <label>Catégorie</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.photo_url(class="form-control", placeholder="URL de la photo") }}
+                                <label>URL de la photo</label>
+                            </div>
+                        </div>
+
+                        {% if produit.photo_url %}
+                        <div class="col-12 mb-4">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <img src="{{ produit.photo_url }}" alt="Photo actuelle" class="rounded me-3" style="width: 100px; height: 100px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1">Photo actuelle</h6>
+                                    <small class="text-muted">La nouvelle URL remplacera cette image</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 py-3" 
+                                    style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('admin.gestion_produits') }}" 
+                               class="btn btn-outline-secondary flex-grow-1 py-3">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            {{ form.description.label }}
-            {{ form.description(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.prix_produit.label }}
-            {{ form.prix_produit(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.categorie.label }}
-            {{ form.categorie(class="form-select") }}
-        </div>
-        <div class="mb-3">
-            {{ form.photo_url.label }}
-            {{ form.photo_url(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
-        <a href="{{ url_for('admin.gestion_produits') }}" class="btn btn-secondary">Annuler</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

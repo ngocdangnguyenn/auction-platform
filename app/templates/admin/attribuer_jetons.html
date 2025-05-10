@@ -1,18 +1,61 @@
 {% extends 'base.html' %}
 
+{% block title %}Attribuer des Jetons{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h1>Attribuer des jetons à {{ utilisateur.nom_utilisateur }}</h1>
-    <form method="POST">
-        {{ form.csrf_token }}
-        <div class="mb-3">
-            <label for="nombre_jetons" class="form-label">Nombre de jetons :</label>
-            {{ form.nombre_jetons(class="form-control") }}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-coins me-2"></i>Attribuer des Jetons
+        </h1>
+        <p class="lead mb-0">{{ utilisateur.prenom }} {{ utilisateur.nom }}</p>
+    </div>
+</header>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 py-4">
+                    <h2 class="h4 text-primary mb-0">
+                        <i class="fas fa-wallet me-2"></i>Attribution de Jetons
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" class="row g-3">
+                        {{ form.csrf_token }}
+                        
+                        <!-- Solde actuel -->
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-info d-flex align-items-center mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <div>
+                                    <strong>Solde actuel :</strong> {{ utilisateur.solde_jetons }} jetons
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Champ de saisie -->
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.nombre_jetons(class="form-control form-control-lg", placeholder="Nombre de jetons") }}
+                                <label for="nombre_jetons">Nombre de jetons à attribuer</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Boutons d'action -->
+                        <div class="col-12 d-flex gap-2">
+                            {{ form.submit(class="btn btn-success flex-grow-1 py-3", style="background: linear-gradient(90deg, #28a745 0%, #218838 100%)") }}
+                            <a href="{{ url_for('admin.gestion_utilisateurs') }}" class="btn btn-outline-secondary flex-grow-1 py-3">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="d-flex gap-2">
-            {{ form.submit(class="btn btn-success") }}
-            <a href="{{ url_for('admin.gestion_utilisateurs') }}" class="btn btn-secondary">Annuler</a>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

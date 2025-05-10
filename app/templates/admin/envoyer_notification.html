@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Titre principal -->
-    <h1 class="text-center text-uppercase fw-bold text-primary mb-4">
-        <i class="fas fa-paper-plane me-2"></i> Envoyer une Notification
-    </h1>
-    <hr class="mb-4">
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-paper-plane me-2"></i>Envoyer une Notification
+        </h1>
+        <p class="lead mb-0">Communiquez avec vos utilisateurs</p>
+    </div>
+</header>
 
     <!-- Formulaire -->
     <form method="POST" class="p-4 border rounded shadow-sm bg-light">

@@ -3,28 +3,65 @@
 {% block title %}Acheter des Jetons{% endblock %}
 
 {% block content %}
-<header class="bg-primary text-white py-4 shadow">
-    <div class="container text-center">
-        <h1 class="h2 fw-bold">Acheter des Jetons</h1>
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">Acheter des Jetons</h1>
+        <p class="lead mb-0">Augmentez vos chances de gagner avec plus de jetons !</p>
     </div>
 </header>
 
 <div class="container my-5">
-    <!-- Section Choix du Pack -->
-    <h2 class="text-center text-secondary fw-bold mb-4">Choisissez un pack de jetons</h2>
-    <form method="POST" action="{{ url_for('client.acheter_jetons') }}" class="p-4 border rounded shadow-sm bg-light">
-        {{ form.hidden_tag() }}
-        
-        <!-- Sélection du Pack -->
-        <div class="mb-4">
-            <label for="pack" class="form-label fw-bold">Pack de jetons</label>
-            {{ form.pack_jetons(class="form-select shadow-sm") }}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show mb-4 shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Purchase Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="text-center text-primary fw-bold mb-0">
+                        <i class="fas fa-coins me-2"></i>Packs disponibles
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('client.acheter_jetons') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Pack Selection -->
+                        <div class="mb-4">
+                            <label for="pack" class="form-label h5 mb-3">Sélectionnez votre pack :</label>
+                            {{ form.pack_jetons(class="form-select form-select-lg mb-3 shadow-sm") }}
+                        </div>
+                        
+                        <!-- Purchase Button -->
+                        <button type="submit" class="btn btn-success btn-lg w-100 py-3 shadow-sm" 
+                                style="background: linear-gradient(90deg, #28a745 0%, #218838 100%);">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Acheter maintenant
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Info Section -->
+                <div class="card-footer bg-light border-0 p-4">
+                    <div class="d-flex align-items-center text-muted">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Les jetons seront ajoutés instantanément à votre compte.</small>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <!-- Bouton d'Achat -->
-        <button type="submit" class="btn btn-success w-100 py-3 shadow-sm">
-            <i class="fas fa-shopping-cart me-2"></i> Acheter
-        </button>
-    </form>
+    </div>
 </div>
 {% endblock %}

@@ -1,32 +1,81 @@
 {% extends "base.html" %}
 
+{% block title %}Modifier l'enchère{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Modifier l'enchère : {{ enchere.produit.nom_produit }}</h2>
-    <form method="POST" action="{{ url_for('admin.modifier_enchere', enchere_id=enchere.id_enchere) }}">
-        {{ form.csrf_token }}
-        <div class="mb-3">
-            {{ form.produit.label }}
-            {{ form.produit(class="form-control") }}
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-edit me-2"></i>Modifier l'enchère
+        </h1>
+        <p class="lead mb-0">{{ enchere.produit.nom_produit }}</p>
+    </div>
+</header>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 py-4">
+                    <h2 class="h4 text-primary mb-0">
+                        <i class="fas fa-gavel me-2"></i>Informations de l'enchère
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.modifier_enchere', enchere_id=enchere.id_enchere) }}" class="row g-3">
+                        {{ form.csrf_token }}
+                        
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.produit(class="form-select") }}
+                                <label>Produit</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.date_debut(class="form-control") }}
+                                <label>Date de début</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.date_fin(class="form-control") }}
+                                <label>Date de fin</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.jetons_requis(class="form-control") }}
+                                <label>Jetons requis</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.prix_depart(class="form-control") }}
+                                <label>Prix de départ (€)</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 py-3" 
+                                    style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('admin.gestion_encheres') }}" 
+                               class="btn btn-outline-secondary flex-grow-1 py-3">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            {{ form.date_debut.label }}
-            {{ form.date_debut(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.date_fin.label }}
-            {{ form.date_fin(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.jetons_requis.label }}
-            {{ form.jetons_requis(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.prix_depart.label }}
-            {{ form.prix_depart(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
-        <a href="{{ url_for('admin.gestion_encheres') }}" class="btn btn-secondary">Annuler</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

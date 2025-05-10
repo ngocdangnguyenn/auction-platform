@@ -3,28 +3,65 @@
 {% block title %}Modifier un Pack{% endblock %}
 
 {% block content %}
-<header class="bg-primary text-white py-3">
-    <div class="container">
-        <h1 class="h3">Modifier le Pack : {{ pack.nom_pack }}</h1>
+<!-- Hero Section -->
+<header class="py-5" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-edit me-2"></i>Modifier le Pack
+        </h1>
+        <p class="lead mb-0">{{ pack.nom_pack }}</p>
     </div>
 </header>
+
 <div class="container my-5">
-    <form method="POST" action="{{ url_for('admin.modifier_pack', pack_id=pack.id_pack) }}" class="p-4 border rounded bg-light">
-        {{ form.hidden_tag() }}
-        <div class="mb-3">
-            {{ form.nom_pack.label }}
-            {{ form.nom_pack(class="form-control") }}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 py-4">
+                    <h2 class="h4 text-primary mb-0">
+                        <i class="fas fa-coins me-2"></i>Informations du Pack
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.modifier_pack', pack_id=pack.id_pack) }}" class="row g-3">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                {{ form.nom_pack(class="form-control", placeholder="Nom du pack") }}
+                                <label>Nom du pack</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.nombre_jetons(class="form-control", placeholder="Nombre de jetons") }}
+                                <label>Nombre de jetons</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.prix_pack(class="form-control", placeholder="Prix") }}
+                                <label>Prix (€)</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 py-3" 
+                                    style="background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%)">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('admin.gestion_packs') }}" 
+                               class="btn btn-outline-secondary flex-grow-1 py-3">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            {{ form.nombre_jetons.label }}
-            {{ form.nombre_jetons(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.prix_pack.label }}
-            {{ form.prix_pack(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
-        <a href="{{ url_for('admin.gestion_packs') }}" class="btn btn-secondary">Annuler</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

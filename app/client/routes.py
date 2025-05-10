@@ -173,11 +173,7 @@ def placer_enchere(enchere_id):
         # Déduire les jetons requis
         current_user.solde_jetons -= enchere.jetons_requis
 
-        # Mettre à jour l'enchère
-        enchere.prix_actuel = montant
-        enchere.gagnant_id = current_user.id_utilisateur
-
-        # Ajouter une mise
+        # Ajouter une mise (SUPPRESSION de la mise à jour du gagnant_id)
         mise = Mise(
             enchere_id=enchere.id_enchere,
             utilisateur_id=current_user.id_utilisateur,
