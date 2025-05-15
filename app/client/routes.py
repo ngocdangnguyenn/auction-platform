@@ -178,7 +178,6 @@ def placer_enchere(enchere_id):
             enchere_id=enchere.id_enchere,
             utilisateur_id=current_user.id_utilisateur,
             prix_propose=montant,
-            jetons_utilises=enchere.jetons_requis
         )
         db.session.add(mise)
         db.session.commit()
