@@ -1,5 +1,6 @@
 import os
+
 class Config:
-    SECRET_KEY = os.urandom(24)
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://nndng:Nguyen2016@localhost:3305/projetweb'
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'your-default-secret')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

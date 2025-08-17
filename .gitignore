@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment variables
+.env
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Migrations
+migrations/versions/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node.js / Frontend
+node_modules/
+dist/
+build/
+*.tgz
+
+# Media uploads
+uploads/
+media/
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+
+# Test cache
+.pytest_cache/
+
+# Misc
+*.bak
+*.tmp

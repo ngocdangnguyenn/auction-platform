@@ -1,0 +1,10 @@
+pytest
+pytest-cov
+flake8
+black
+python-dotenv
+coverage
+mypy
+Flask-Migrate
+isort
+pre-commit
