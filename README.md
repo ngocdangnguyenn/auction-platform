@@ -62,8 +62,9 @@ This project demonstrates:
 > These skills are directly transferable to AI/data science: handling data consistency, reproducibility, and scalable code organization are critical for ML pipelines and research.
 
 ## Contact
-- **LinkedIn:** https://www.linkedin.com/in/ngocnguyen-fr
-- **Email:** nndnguyen2016@gmail.com
+- **Email**: [nndnguyen2016@gmail.com](mailto:nndnguyen2016@gmail.com)
+- **LinkedIn**: [https://www.linkedin.com/in/ngocnguyen-fr](https://www.linkedin.com/in/ngocnguyen-fr)
+- **Portfolio:** [https://portfolio-qyyg.onrender.com](https://portfolio-qyyg.onrender.com)
 
 ---
 I welcome feedback and suggestions for improvement. Thank you for visiting AuctionTech!
