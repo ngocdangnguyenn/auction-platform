@@ -24,7 +24,7 @@ AuctionTech is a web application for online auctions, where users bid for high-t
 
 ## Quickstart
 ```bash
-git clone https://github.com/ngocdangnguyen-ng/auctiontech.git
+git clone https://github.com/ngocdangnguyenn/auctiontech.git
 cd auctiontech
 pip install -r requirements.txt
 # Or with Docker
@@ -40,30 +40,9 @@ pip install -r requirements.txt
    docker-compose up --build
    ```
 
-## Data Modeling & Business Logic
-- **Schema:** User token balances, auctions, bids, products, token packs
-- **Logic:** Bids are placed with tokens; winner is lowest unique bid; refunds if no winner
-- **Consistency:** All transactions and refunds handled atomically
-- **Extensible:** Schema and logic designed for future analytics, reporting, or AI integration
-
-## Testing & Reproducibility
-- **Testing:** Automated tests for business logic and endpoints (pytest)
-- **Code Quality:** Linting, formatting, pre-commit hooks
-- **Docker:** Reproducible environment for development, testing, and deployment
-
-## Relevance for AI/Data/Software Engineering
-This project demonstrates:
-- **Data modeling:** Designing schemas for transactional systems (tokens, auctions, bids)
-- **Business logic:** Implementing complex rules (lowest unique bid, refunds, role-based access)
-- **Testing & reproducibility:** Practices essential for reliable software and research pipelines
-- **Code organization:** Modular, maintainable codebase (transferable to ML/AI projects)
-- **DevOps:** Dockerized setup, environment management, CI-ready structure
-
-> These skills are directly transferable to AI/data science: handling data consistency, reproducibility, and scalable code organization are critical for ML pipelines and research.
-
 ## Contact
 - **Email**: [nndnguyen2016@gmail.com](mailto:nndnguyen2016@gmail.com)
-- **LinkedIn**: [https://www.linkedin.com/in/ngocnguyen-fr](https://www.linkedin.com/in/ngocnguyen-fr)
+- **LinkedIn**: [https://www.linkedin.com/in/ngocdangnguyenn](https://www.linkedin.com/in/ngocdangnguyenn)
 - **Portfolio:** [https://portfolio-qyyg.onrender.com](https://portfolio-qyyg.onrender.com)
 
 ---
